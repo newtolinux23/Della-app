@@ -21,10 +21,9 @@
     
     <!-- HEADER WITH LOGO -->
     <header class="bg-gradient-to-b from-black to-zinc-900 border-b border-yellow-600/30 p-4 flex flex-col items-center shrink-0 z-10">
-        <div class="relative w-16 h-20 mb-2 mt-2">
+        <div class="relative w-20 h-28 mb-2 mt-2">
            <div class="absolute inset-0 rounded-[50%] border-2 border-yellow-500 opacity-50 animate-pulse" style="animation-duration: 3s;"></div>
-           <!-- Reference to exactly "Della " as instructed -->
-           <img src="Della " alt="DELLA Curls and colors Logo" class="w-full h-full rounded-[50%] object-cover border-2 border-[#111] shadow-[0_0_15px_rgba(234,179,8,0.4)] relative z-10">
+           <img src="logo.jpg" alt="DELLA Curls and colors Logo" class="w-full h-full rounded-[50%] object-cover border-2 border-[#111] shadow-[0_0_15px_rgba(234,179,8,0.4)] relative z-10">
         </div>
         <h1 class="text-2xl font-serif text-center tracking-wider text-yellow-500 drop-shadow-md" style="font-family: 'Cormorant Garamond', serif;">DELLA</h1>
         <p class="text-[10px] text-center tracking-[0.2em] uppercase text-yellow-200/70 mt-1">Curls and colors</p>
@@ -89,7 +88,10 @@
                     <div class="flex justify-between text-sm font-medium"><span class="text-gray-300">Subtotal:</span><span id="display-subtotal" class="text-white">$0.00</span></div>
                     <div class="flex justify-between text-sm text-gray-400"><span>Sales Tax (8.25% on Retail):</span><span id="display-tax">$0.00</span></div>
                     <div class="flex justify-between text-xl font-bold border-t border-yellow-600/30 pt-4 mt-4"><span class="text-white">Charge Client:</span><span id="display-total" class="text-yellow-500">$0.00</span></div>
-                    <div class="flex justify-between text-xs mt-3 bg-black/40 p-2 rounded-lg border border-yellow-900/30"><span class="text-gray-400 uppercase tracking-wider font-bold">Projected Net:</span><span id="display-profit" class="text-green-400 font-bold">$0.00</span></div>
+                    
+                    <div class="flex justify-between text-xs mt-3 bg-black/40 p-2 rounded-lg border border-yellow-900/30"><span class="text-gray-400 uppercase tracking-wider font-bold">Net Profit:</span><span id="display-profit" class="text-green-400 font-bold">$0.00</span></div>
+                    <div class="flex justify-between text-xs mt-1 bg-black/40 p-2 rounded-lg border border-red-900/30"><span class="text-red-400 uppercase tracking-wider font-bold">Tax Savings (25%):</span><span id="display-withholding" class="text-red-400 font-bold">-$0.00</span></div>
+                    <div class="flex justify-between text-xs mt-1 bg-black/40 p-2 rounded-lg border border-yellow-900/30"><span class="text-white uppercase tracking-wider font-bold">True Take-Home:</span><span id="display-takehome" class="text-white font-bold">$0.00</span></div>
                 </div>
 
                 <button type="submit" class="w-full bg-gradient-to-r from-yellow-600 to-yellow-500 text-black font-bold py-4 rounded-xl shadow-[0_0_15px_rgba(234,179,8,0.4)] mt-8 flex items-center justify-center gap-2 text-lg uppercase tracking-wide">
@@ -126,11 +128,12 @@
         lucide.createIcons();
 
         // 1. Initial Database Setup
-        const clients = ["Jessica T.", "Sarah M.", "Amanda R.", "Kathy Hanchy", "Lisa Hazel"];
+        const clients = ["Jessica T.", "Sarah M.", "Amanda R.", "Emily R.", "Kathy Hanchy", "Lisa Hazel"];
         const services = [
             { name: "Lived-In Balayage", price: 180 },
             { name: "Bespoke Curl Cut", price: 85 },
             { name: "Luxury Blowout", price: 55 },
+            { name: "Custom Root Smudge", price: 145 },
             { name: "Full Highlight", price: 75 },
             { name: "Partial Highlight", price: 55 }
         ];
@@ -159,14 +162,19 @@
             let subtotal = servicePrice + retailPrice;
             let tax = (retailPrice > 0) ? (retailPrice * 0.0825) : 0;
             let grandTotal = subtotal + tax;
+            
             let netProfit = subtotal - cost;
+            let taxSavings = netProfit > 0 ? (netProfit * 0.25) : 0;
+            let takeHome = netProfit - taxSavings;
 
             document.getElementById('display-subtotal').innerText = '$' + subtotal.toFixed(2);
             document.getElementById('display-tax').innerText = '$' + tax.toFixed(2);
             document.getElementById('display-total').innerText = '$' + grandTotal.toFixed(2);
             document.getElementById('display-profit').innerText = '$' + netProfit.toFixed(2);
+            document.getElementById('display-withholding').innerText = '-$' + taxSavings.toFixed(2);
+            document.getElementById('display-takehome').innerText = '$' + takeHome.toFixed(2);
             
-            return { subtotal, tax, grandTotal, netProfit, cost };
+            return { subtotal, tax, grandTotal, netProfit, taxSavings, takeHome, cost };
         }
 
         serviceSelect.addEventListener('change', updateMath);
