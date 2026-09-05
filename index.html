@@ -22,7 +22,7 @@
     <div id="security-screen" class="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center transition-opacity duration-500">
         <div class="relative w-24 h-32 mb-8">
             <div class="absolute inset-0 rounded-[50%] border-2 border-yellow-500 opacity-50 animate-pulse" style="animation-duration: 3s;"></div>
-            <img src="Della%20" alt="DELLA" class="w-full h-full rounded-[50%] object-cover border-2 border-[#111] shadow-[0_0_15px_rgba(234,179,8,0.4)] relative z-10">
+            <img src="logo.jpg" alt="DELLA" class="w-full h-full rounded-[50%] object-cover border-2 border-[#111] shadow-[0_0_15px_rgba(234,179,8,0.4)] relative z-10">
         </div>
         <h2 class="text-2xl font-serif text-yellow-500 mb-6 tracking-wide" style="font-family: 'Cormorant Garamond', serif;">Register Locked</h2>
         
@@ -41,7 +41,7 @@
     <header class="bg-gradient-to-b from-black to-zinc-900 border-b border-yellow-600/30 p-4 flex flex-col items-center shrink-0 z-10">
         <div class="relative w-20 h-28 mb-2 mt-2">
            <div class="absolute inset-0 rounded-[50%] border-2 border-yellow-500 opacity-50 animate-pulse" style="animation-duration: 3s;"></div>
-           <img src="Della%20" alt="DELLA Curls and colors Logo" class="w-full h-full rounded-[50%] object-cover border-2 border-[#111] shadow-[0_0_15px_rgba(234,179,8,0.4)] relative z-10">
+           <img src="logo.jpg" alt="DELLA Curls and colors Logo" class="w-full h-full rounded-[50%] object-cover border-2 border-[#111] shadow-[0_0_15px_rgba(234,179,8,0.4)] relative z-10">
         </div>
         <h1 class="text-2xl font-serif text-center tracking-wider text-yellow-500 drop-shadow-md" style="font-family: 'Cormorant Garamond', serif;">DELLA</h1>
         <p class="text-[10px] text-center tracking-[0.2em] uppercase text-yellow-200/70 mt-1">Curls and colors</p>
@@ -145,7 +145,9 @@
     <script>
         lucide.createIcons();
 
-        // UNIQUE GOOGLE SCRIPT API URL
+        // ------------------------------------------------------------------
+        // GOOGLE APPS SCRIPT URL HARDCODED HERE
+        // ------------------------------------------------------------------
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwpehnG0SRuD3Bw74V9ZQb6jLDyyLLi02kHgugyIYu5kpRjC4zgUxlgNJRT-6OW38QZ/exec';
 
         // --- SECURITY PIN LOGIC ---
@@ -190,7 +192,6 @@
                 clientSelect.innerHTML = '<option value="">-- Database Error. Check URL --</option>';
             });
 
-        // Local UI state for ledger
         let ledger = [];
 
         // --- LIVE CALCULATOR LOGIC ---
