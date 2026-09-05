@@ -22,7 +22,7 @@
     <div id="security-screen" class="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center transition-opacity duration-500">
         <div class="relative w-24 h-32 mb-8">
             <div class="absolute inset-0 rounded-[50%] border-2 border-yellow-500 opacity-50 animate-pulse" style="animation-duration: 3s;"></div>
-            <img src="logo.jpg" alt="DELLA" class="w-full h-full rounded-[50%] object-cover border-2 border-[#111] shadow-[0_0_15px_rgba(234,179,8,0.4)] relative z-10">
+            <img src="Della%20" alt="DELLA" class="w-full h-full rounded-[50%] object-cover border-2 border-[#111] shadow-[0_0_15px_rgba(234,179,8,0.4)] relative z-10">
         </div>
         <h2 class="text-2xl font-serif text-yellow-500 mb-6 tracking-wide" style="font-family: 'Cormorant Garamond', serif;">Register Locked</h2>
         
@@ -41,7 +41,7 @@
     <header class="bg-gradient-to-b from-black to-zinc-900 border-b border-yellow-600/30 p-4 flex flex-col items-center shrink-0 z-10">
         <div class="relative w-20 h-28 mb-2 mt-2">
            <div class="absolute inset-0 rounded-[50%] border-2 border-yellow-500 opacity-50 animate-pulse" style="animation-duration: 3s;"></div>
-           <img src="logo.jpg" alt="DELLA Curls and colors Logo" class="w-full h-full rounded-[50%] object-cover border-2 border-[#111] shadow-[0_0_15px_rgba(234,179,8,0.4)] relative z-10">
+           <img src="Della%20" alt="DELLA Curls and colors Logo" class="w-full h-full rounded-[50%] object-cover border-2 border-[#111] shadow-[0_0_15px_rgba(234,179,8,0.4)] relative z-10">
         </div>
         <h1 class="text-2xl font-serif text-center tracking-wider text-yellow-500 drop-shadow-md" style="font-family: 'Cormorant Garamond', serif;">DELLA</h1>
         <p class="text-[10px] text-center tracking-[0.2em] uppercase text-yellow-200/70 mt-1">Curls and colors</p>
@@ -145,10 +145,8 @@
     <script>
         lucide.createIcons();
 
-        // ----------------------------------------------------
-        // PASTE YOUR NEW GOOGLE APPS SCRIPT URL HERE
-        // ----------------------------------------------------
-        const WEB_APP_URL = 'PASTE_YOUR_NEW_WEB_APP_URL_HERE';
+        // UNIQUE GOOGLE SCRIPT API URL
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwpehnG0SRuD3Bw74V9ZQb6jLDyyLLi02kHgugyIYu5kpRjC4zgUxlgNJRT-6OW38QZ/exec';
 
         // --- SECURITY PIN LOGIC ---
         const securityScreen = document.getElementById('security-screen');
@@ -169,36 +167,31 @@
             }
         });
 
-        // --- FETCH DYNAMIC DATABASE (TWO-WAY SYNC) ---
+        // --- FETCH TWO-WAY DATABASE ---
         const clientSelect = document.getElementById('client-select');
         const serviceSelect = document.getElementById('service-select');
 
         fetch(WEB_APP_URL)
             .then(response => response.json())
             .then(data => {
-                // Clear loading text
                 clientSelect.innerHTML = '<option value="" data-price="0">-- Choose Client --</option>';
                 serviceSelect.innerHTML = '<option value="None" data-price="0">-- Choose Service --</option>';
                 
-                // Populate Clients from Google Sheet
                 data.clients.forEach(client => {
                     clientSelect.innerHTML += `<option value="${client}">${client}</option>`;
                 });
                 
-                // Populate Services from Google Sheet
                 data.services.forEach(service => {
                     serviceSelect.innerHTML += `<option value="${service.name}" data-price="${service.price}">${service.name} - $${parseFloat(service.price).toFixed(2)}</option>`;
                 });
             })
             .catch(error => {
                 console.log('Database load error:', error);
-                clientSelect.innerHTML = '<option value="">-- Error Loading Database --</option>';
+                clientSelect.innerHTML = '<option value="">-- Database Error. Check URL --</option>';
             });
 
-        // Dummy ledger for visual reference
-        let ledger = [
-            { id: "TX-101", date: "Aug 25, 2026", client: "Jessica T.", service: "Lived-In Balayage", retail: "None", formula: "Lightener + 20vol. Gloss: 9N + 9V (15 mins).", cost: 22.50, profit: 157.50, total: 180.00 }
-        ];
+        // Local UI state for ledger
+        let ledger = [];
 
         // --- LIVE CALCULATOR LOGIC ---
         const retailSelect = document.getElementById('retail-select');
