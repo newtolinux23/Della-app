@@ -58,14 +58,47 @@
     <!-- MAIN CONTENT -->
     <main class="flex-1 overflow-y-auto pb-24 custom-scrollbar relative">
         
+        <!-- DASHBOARD TAB (PHASE 2 UPGRADE) -->
+        <div id="tab-dashboard" class="p-5">
+            <h2 class="text-xl text-yellow-500 border-b border-yellow-600/30 pb-3 mb-5 flex items-center gap-3" style="font-family: 'Cormorant Garamond', serif;">
+                <i data-lucide="trending-up" class="w-6 h-6"></i> Weekly Command Center
+            </h2>
+            
+            <!-- Goal Progress Bar -->
+            <div class="bg-zinc-900 p-6 rounded-2xl shadow-lg border border-yellow-900/30 mb-6 text-center">
+                <p class="text-xs text-gray-400 uppercase tracking-widest mb-1">Weekly Net Goal</p>
+                <h3 class="text-4xl font-bold text-white mb-4">$<span id="dash-net">0.00</span> <span class="text-lg text-gray-500 font-normal">/ $1500</span></h3>
+                
+                <div class="w-full bg-zinc-800 rounded-full h-4 mb-2 overflow-hidden border border-zinc-700">
+                    <div id="goal-progress-bar" class="bg-gradient-to-r from-yellow-600 to-yellow-400 h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
+                </div>
+                <p id="goal-message" class="text-xs text-yellow-500/80 font-medium italic">Loading stats...</p>
+            </div>
+
+            <!-- Stat Grid -->
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-zinc-900 p-5 rounded-xl border border-zinc-800 shadow-md flex flex-col justify-center">
+                    <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">Gross Revenue</p>
+                    <p class="text-2xl font-bold text-white">$<span id="dash-gross">0.00</span></p>
+                </div>
+                <div class="bg-zinc-900 p-5 rounded-xl border border-zinc-800 shadow-md flex flex-col justify-center">
+                    <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">Tips Earned</p>
+                    <p class="text-2xl font-bold text-yellow-500">$<span id="dash-tips">0.00</span></p>
+                </div>
+                <div class="bg-zinc-900 p-4 rounded-xl border border-red-900/20 col-span-2 shadow-md flex justify-between items-center">
+                    <p class="text-xs text-gray-400 uppercase tracking-widest">Business Expenses</p>
+                    <p class="text-xl font-bold text-red-400">-$<span id="dash-expenses">0.00</span></p>
+                </div>
+            </div>
+        </div>
+
         <!-- CHECKOUT TAB -->
-        <div id="tab-checkout" class="p-5 space-y-6">
+        <div id="tab-checkout" class="p-5 space-y-6 tab-hidden">
             <h2 class="text-xl text-yellow-500 border-b border-yellow-600/30 pb-3 flex items-center gap-3" style="font-family: 'Cormorant Garamond', serif;">
                 <i data-lucide="calculator" class="w-6 h-6"></i> New Transaction
             </h2>
             
             <form id="checkout-form" class="space-y-5">
-                
                 <div class="space-y-1.5">
                     <label class="block text-xs font-bold uppercase tracking-wider text-yellow-600">Select Client</label>
                     <select id="client-select" class="w-full p-3.5 rounded-xl border border-yellow-600/30 bg-zinc-900 text-white outline-none focus:border-yellow-500" required>
@@ -135,7 +168,7 @@
             </form>
         </div>
 
-        <!-- EXPENSE TAB (PHASE 1 UPGRADE) -->
+        <!-- EXPENSE TAB -->
         <div id="tab-expense" class="p-5 tab-hidden">
             <h2 class="text-xl text-red-400 border-b border-red-900/30 pb-3 mb-5 flex items-center gap-3" style="font-family: 'Cormorant Garamond', serif;">
                 <i data-lucide="receipt" class="w-6 h-6"></i> Log Business Expense
@@ -174,15 +207,19 @@
 
     <!-- BOTTOM NAVIGATION -->
     <nav class="bg-zinc-900 border-t border-yellow-900/50 flex justify-around p-2 pb-6 absolute bottom-0 w-full z-20 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
-        <button id="btn-nav-checkout" class="nav-btn flex flex-col items-center gap-1.5 w-1/3 py-2 rounded-xl text-yellow-500 bg-yellow-500/10 transition-colors" data-target="tab-checkout">
+        <button id="btn-nav-dashboard" class="nav-btn flex flex-col items-center gap-1.5 w-1/4 py-2 rounded-xl text-yellow-500 bg-yellow-500/10 transition-colors" data-target="tab-dashboard">
+            <i data-lucide="trending-up" class="w-6 h-6"></i>
+            <span class="text-[10px] font-bold uppercase tracking-widest">Dash</span>
+        </button>
+        <button id="btn-nav-checkout" class="nav-btn flex flex-col items-center gap-1.5 w-1/4 py-2 rounded-xl text-gray-500 hover:text-gray-300 transition-colors" data-target="tab-checkout">
             <i data-lucide="calculator" class="w-6 h-6"></i>
             <span class="text-[10px] font-bold uppercase tracking-widest">Register</span>
         </button>
-        <button id="btn-nav-expense" class="nav-btn flex flex-col items-center gap-1.5 w-1/3 py-2 rounded-xl text-gray-500 hover:text-gray-300 transition-colors" data-target="tab-expense">
+        <button id="btn-nav-expense" class="nav-btn flex flex-col items-center gap-1.5 w-1/4 py-2 rounded-xl text-gray-500 hover:text-gray-300 transition-colors" data-target="tab-expense">
             <i data-lucide="receipt" class="w-6 h-6"></i>
-            <span class="text-[10px] font-bold uppercase tracking-widest">Expenses</span>
+            <span class="text-[10px] font-bold uppercase tracking-widest">Expense</span>
         </button>
-        <button id="btn-nav-ledger" class="nav-btn flex flex-col items-center gap-1.5 w-1/3 py-2 rounded-xl text-gray-500 hover:text-gray-300 transition-colors" data-target="tab-ledger">
+        <button id="btn-nav-ledger" class="nav-btn flex flex-col items-center gap-1.5 w-1/4 py-2 rounded-xl text-gray-500 hover:text-gray-300 transition-colors" data-target="tab-ledger">
             <i data-lucide="list" class="w-6 h-6"></i>
             <span class="text-[10px] font-bold uppercase tracking-widest">Ledger</span>
         </button>
@@ -192,9 +229,9 @@
         lucide.createIcons();
 
         // ------------------------------------------------------------------
-        // NEW GOOGLE APPS SCRIPT URL SECURELY CONNECTED
+        // GOOGLE APPS SCRIPT URL
         // ------------------------------------------------------------------
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyrGYjJaOJ0FcX3QCRl1I6oyeJzmbwozV5CsGDR2THEqU5tWGwVEZ93r5Y7TPPvtfYH/exec';
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxiylfeE-cNlPDsm-RN1sqLs6XmimZK_vQyLADzEJ_Wt7lnP_tyKxHTjNS_rO-4ICHX/exec';
 
         const securityScreen = document.getElementById('security-screen');
         const pinForm = document.getElementById('pin-form');
@@ -202,7 +239,8 @@
         const pinError = document.getElementById('pin-error');
         const unlockBtn = document.getElementById('unlock-btn');
 
-        let clientHistoryData = {}; // CRM Memory Storage
+        let clientHistoryData = {}; 
+        let globalDashStats = { gross: 0, net: 0, tips: 0, expenses: 0 }; 
 
         pinForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -227,6 +265,34 @@
                 });
         });
 
+        // --- PHASE 2: DASHBOARD UI RENDERER ---
+        function updateDashboardUI() {
+            const weeklyGoal = 1500;
+            document.getElementById('dash-gross').innerText = (globalDashStats.gross || 0).toFixed(2);
+            document.getElementById('dash-net').innerText = (globalDashStats.net || 0).toFixed(2);
+            document.getElementById('dash-tips').innerText = (globalDashStats.tips || 0).toFixed(2);
+            document.getElementById('dash-expenses').innerText = (globalDashStats.expenses || 0).toFixed(2);
+            
+            // Calculate Progress Bar
+            let progressPct = Math.min(((globalDashStats.net || 0) / weeklyGoal) * 100, 100);
+            
+            // Allow a small delay for smooth animation after load
+            setTimeout(() => {
+                document.getElementById('goal-progress-bar').style.width = progressPct + '%';
+            }, 300);
+
+            const msgEl = document.getElementById('goal-message');
+            if (progressPct >= 100) {
+                msgEl.innerText = "Weekly Goal Crushed! 🎉";
+                msgEl.className = "text-xs text-green-400 font-bold uppercase tracking-widest mt-1";
+                document.getElementById('goal-progress-bar').className = "bg-gradient-to-r from-green-500 to-green-400 h-full rounded-full transition-all duration-1000";
+            } else {
+                let remaining = (weeklyGoal - globalDashStats.net).toFixed(2);
+                msgEl.innerText = `$${remaining} to hit your goal`;
+                msgEl.className = "text-xs text-yellow-500/80 font-medium italic mt-1";
+            }
+        }
+
         const clientSelect = document.getElementById('client-select');
         const serviceSelect = document.getElementById('service-select');
         const manualClientInput = document.getElementById('manual-client-input');
@@ -237,8 +303,12 @@
         function loadDatabase(data) {
             clientSelect.innerHTML = '<option value="">-- Choose Client --</option>';
             serviceSelect.innerHTML = '<option value="None" data-price="0">-- Choose Service --</option>';
-            clientHistoryData = data.history || {}; // Save history globally
             
+            clientHistoryData = data.history || {}; 
+            globalDashStats = data.dashboard || { gross: 0, net: 0, tips: 0, expenses: 0 };
+            
+            updateDashboardUI(); // Render the new dashboard
+
             data.clients.forEach(client => {
                 clientSelect.innerHTML += `<option value="${client}">${client}</option>`;
             });
@@ -258,8 +328,6 @@
             } else {
                 manualClientInput.classList.add('hidden');
                 manualClientInput.required = false;
-                
-                // CRM MEMORY: Auto-fill past formula if it exists
                 if (clientHistoryData[clientSelect.value]) {
                     formulaInput.value = "[LAST FORMULA]:\n" + clientHistoryData[clientSelect.value] + "\n\n[TODAY]:\n";
                 } else {
@@ -283,7 +351,6 @@
         });
 
         let ledger = [];
-
         const retailSelect = document.getElementById('retail-select');
         const costInput = document.getElementById('cost-input');
         const tipBtns = document.querySelectorAll('.tip-btn');
@@ -380,7 +447,7 @@
         // Handle Expense Submission
         document.getElementById('expense-form').addEventListener('submit', function(e) {
             e.preventDefault();
-            const expAmount = document.getElementById('expense-amount').value;
+            const expAmount = parseFloat(document.getElementById('expense-amount').value);
             const expDesc = document.getElementById('expense-desc').value;
 
             const newExp = {
@@ -391,6 +458,11 @@
                 date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
             };
 
+            // Update live dashboard stats
+            globalDashStats.expenses += expAmount;
+            globalDashStats.net -= expAmount;
+            updateDashboardUI();
+
             fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(newExp) });
             ledger.unshift(newExp);
             renderLedger();
@@ -400,7 +472,7 @@
             setTimeout(() => {
                 overlay.classList.add('tab-hidden');
                 document.getElementById('expense-form').reset();
-                document.getElementById('btn-nav-ledger').click(); 
+                document.getElementById('btn-nav-dashboard').click(); // Return to dashboard to see updated math
             }, 1500);
         });
 
@@ -430,8 +502,12 @@
                 date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
             };
             
-            // Save to local memory immediately for the next visit
+            // Update CRM memory and Dashboard stats locally
             clientHistoryData[finalClient] = submittedFormula;
+            globalDashStats.gross += math.grandTotal;
+            globalDashStats.tips += math.tipAmount;
+            globalDashStats.net += math.netProfit;
+            updateDashboardUI();
 
             fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(newTx) });
 
@@ -448,13 +524,13 @@
                 tipBtns.forEach(b => b.classList.remove('tip-active'));
                 selectedTipPct = 0;
                 updateMath();
-                document.getElementById('btn-nav-ledger').click(); 
+                document.getElementById('btn-nav-dashboard').click(); // Return to dashboard to see success
             }, 1500);
         });
 
-        // Navigation Engine
+        // 4-Button Navigation Engine
         const navBtns = document.querySelectorAll('.nav-btn');
-        const tabs = ['tab-checkout', 'tab-expense', 'tab-ledger'];
+        const tabs = ['tab-dashboard', 'tab-checkout', 'tab-expense', 'tab-ledger'];
 
         navBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -466,14 +542,14 @@
                 
                 // Reset styling for all buttons
                 navBtns.forEach(b => {
-                    b.className = "nav-btn flex flex-col items-center gap-1.5 w-1/3 py-2 rounded-xl text-gray-500 hover:text-gray-300 transition-colors";
+                    b.className = "nav-btn flex flex-col items-center gap-1.5 w-1/4 py-2 rounded-xl text-gray-500 hover:text-gray-300 transition-colors";
                 });
                 
-                // Highlight active button (Expense uses red, others use yellow)
+                // Highlight active button color
                 if(targetId === 'tab-expense') {
-                    btn.closest('button').className = "nav-btn flex flex-col items-center gap-1.5 w-1/3 py-2 rounded-xl text-red-500 bg-red-500/10 transition-colors";
+                    btn.closest('button').className = "nav-btn flex flex-col items-center gap-1.5 w-1/4 py-2 rounded-xl text-red-500 bg-red-500/10 transition-colors";
                 } else {
-                    btn.closest('button').className = "nav-btn flex flex-col items-center gap-1.5 w-1/3 py-2 rounded-xl text-yellow-500 bg-yellow-500/10 transition-colors";
+                    btn.closest('button').className = "nav-btn flex flex-col items-center gap-1.5 w-1/4 py-2 rounded-xl text-yellow-500 bg-yellow-500/10 transition-colors";
                 }
             });
         });
