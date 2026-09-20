@@ -14,6 +14,7 @@
         .tab-hidden { display: none !important; }
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        .tip-active { background: linear-gradient(to right, #ca8a04, #eab308); color: black; font-weight: bold; border-color: transparent; }
     </style>
 </head>
 <body class="max-w-md mx-auto h-screen flex flex-col relative border-x border-yellow-900/30 overflow-hidden">
@@ -30,18 +31,18 @@
             <input type="password" id="pin-input" pattern="[0-9]*" inputmode="numeric" maxlength="4" 
                 class="w-full p-4 text-center text-3xl tracking-[0.5em] rounded-xl border border-yellow-600/30 bg-zinc-900 text-white outline-none focus:border-yellow-500 mb-4 transition-all shadow-inner placeholder-gray-600" 
                 placeholder="••••" required>
-            <button type="submit" class="w-full bg-gradient-to-r from-yellow-600 to-yellow-500 text-black font-bold py-3 rounded-xl shadow-[0_0_15px_rgba(234,179,8,0.4)] uppercase tracking-wide transition-all active:scale-95">
+            <button type="submit" id="unlock-btn" class="w-full bg-gradient-to-r from-yellow-600 to-yellow-500 text-black font-bold py-3 rounded-xl shadow-[0_0_15px_rgba(234,179,8,0.4)] uppercase tracking-wide transition-all active:scale-95">
                 Unlock POS
             </button>
         </form>
-        <p id="pin-error" class="text-red-400 mt-4 text-sm font-bold tracking-wider hidden uppercase">Incorrect PIN</p>
+        <p id="pin-error" class="text-red-400 mt-4 text-sm font-bold tracking-wider hidden uppercase">Invalid PIN / Network Error</p>
     </div>
     
-    <!-- HEADER WITH LOGO -->
+    <!-- HEADER -->
     <header class="bg-gradient-to-b from-black to-zinc-900 border-b border-yellow-600/30 p-4 flex flex-col items-center shrink-0 z-10">
         <div class="relative w-20 h-28 mb-2 mt-2">
            <div class="absolute inset-0 rounded-[50%] border-2 border-yellow-500 opacity-50 animate-pulse" style="animation-duration: 3s;"></div>
-           <img src="logo.jpg" alt="DELLA Curls and colors Logo" class="w-full h-full rounded-[50%] object-cover border-2 border-[#111] shadow-[0_0_15px_rgba(234,179,8,0.4)] relative z-10">
+           <img src="logo.jpg" alt="DELLA Logo" class="w-full h-full rounded-[50%] object-cover border-2 border-[#111] shadow-[0_0_15px_rgba(234,179,8,0.4)] relative z-10">
         </div>
         <h1 class="text-2xl font-serif text-center tracking-wider text-yellow-500 drop-shadow-md" style="font-family: 'Cormorant Garamond', serif;">DELLA</h1>
         <p class="text-[10px] text-center tracking-[0.2em] uppercase text-yellow-200/70 mt-1">Curls and colors</p>
@@ -51,7 +52,7 @@
     <div id="success-overlay" class="absolute inset-0 bg-black/90 z-50 flex flex-col items-center justify-center text-white backdrop-blur-md tab-hidden">
         <i data-lucide="check-circle" class="w-24 h-24 text-yellow-500 mb-4 animate-bounce drop-shadow-[0_0_10px_rgba(234,179,8,0.5)]"></i>
         <h2 class="text-3xl font-serif font-bold text-yellow-500" style="font-family: 'Cormorant Garamond', serif;">Saved!</h2>
-        <p class="text-gray-300 mt-2 font-medium tracking-wide">Sent to Master Ledger</p>
+        <p class="text-gray-300 mt-2 font-medium tracking-wide">Recorded in Master Ledger</p>
     </div>
 
     <!-- MAIN CONTENT -->
@@ -60,27 +61,30 @@
         <!-- CHECKOUT TAB -->
         <div id="tab-checkout" class="p-5 space-y-6">
             <h2 class="text-xl text-yellow-500 border-b border-yellow-600/30 pb-3 flex items-center gap-3" style="font-family: 'Cormorant Garamond', serif;">
-                <i data-lucide="calculator" class="w-6 h-6"></i> New Appointment
+                <i data-lucide="calculator" class="w-6 h-6"></i> New Transaction
             </h2>
             
             <form id="checkout-form" class="space-y-5">
+                
                 <div class="space-y-1.5">
                     <label class="block text-xs font-bold uppercase tracking-wider text-yellow-600">Select Client</label>
                     <select id="client-select" class="w-full p-3.5 rounded-xl border border-yellow-600/30 bg-zinc-900 text-white outline-none focus:border-yellow-500" required>
-                        <option value="" data-price="0">-- Loading Clients... --</option>
+                        <option value="">-- Awaiting PIN Unlock --</option>
                     </select>
+                    <input type="text" id="manual-client-input" class="w-full p-3.5 mt-2 rounded-xl border border-yellow-600/30 bg-zinc-800 text-white outline-none focus:border-yellow-500 hidden placeholder-gray-500" placeholder="Type Client Name...">
                 </div>
 
                 <div class="space-y-1.5">
                     <label class="block text-xs font-bold uppercase tracking-wider text-yellow-600">Primary Service</label>
                     <select id="service-select" class="w-full p-3.5 rounded-xl border border-yellow-600/30 bg-zinc-900 text-white outline-none focus:border-yellow-500" required>
-                        <option value="None" data-price="0">-- Loading Menu... --</option>
+                        <option value="None" data-price="0">-- Awaiting PIN Unlock --</option>
                     </select>
+                    <input type="text" id="manual-service-input" class="w-full p-3.5 mt-2 rounded-xl border border-yellow-600/30 bg-zinc-800 text-white outline-none focus:border-yellow-500 hidden placeholder-gray-500" placeholder="Type Custom Service...">
                 </div>
 
                 <div class="space-y-1.5">
-                    <label class="block text-xs font-bold uppercase tracking-wider text-yellow-600">Formulas & Notes</label>
-                    <textarea id="formula-input" class="w-full p-3.5 rounded-xl border border-yellow-600/30 bg-zinc-900 text-white outline-none focus:border-yellow-500 h-28 resize-none placeholder-gray-600" placeholder="e.g., Lightener + 20vol..."></textarea>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-yellow-600">Service Price ($)</label>
+                    <input type="number" id="service-price-input" step="0.01" class="w-full p-3.5 rounded-xl border border-yellow-600/30 bg-zinc-900 text-white outline-none focus:border-yellow-500 text-lg font-bold placeholder-gray-600" placeholder="0.00" required>
                 </div>
 
                 <div class="space-y-1.5">
@@ -93,23 +97,36 @@
                     </select>
                 </div>
 
-                <div class="space-y-1.5">
-                    <label class="block text-xs font-bold uppercase tracking-wider text-yellow-600">Direct Product Cost $ (Write-Off)</label>
-                    <input type="number" id="cost-input" step="0.01" class="w-full p-3.5 rounded-xl border border-yellow-600/30 bg-zinc-900 text-white outline-none focus:border-yellow-500 placeholder-gray-600" placeholder="Cost of color/lightener..." required>
+                <div class="space-y-2 pt-2">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-yellow-600">Add Gratuity</label>
+                    <div class="grid grid-cols-4 gap-2">
+                        <button type="button" class="tip-btn p-3 rounded-lg border border-yellow-600/30 bg-zinc-900 text-white text-sm transition-colors" data-pct="15">15%</button>
+                        <button type="button" class="tip-btn p-3 rounded-lg border border-yellow-600/30 bg-zinc-900 text-white text-sm transition-colors" data-pct="20">20%</button>
+                        <button type="button" class="tip-btn p-3 rounded-lg border border-yellow-600/30 bg-zinc-900 text-white text-sm transition-colors" data-pct="25">25%</button>
+                        <input type="number" id="custom-tip-input" step="0.01" class="p-3 rounded-lg border border-yellow-600/30 bg-zinc-900 text-white text-sm outline-none focus:border-yellow-500 text-center placeholder-gray-500" placeholder="Cust $">
+                    </div>
                 </div>
 
-                <!-- LIVE RECEIPT -->
+                <div class="space-y-1.5 pt-2">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-yellow-600">Product Cost / Write-Off ($)</label>
+                    <input type="number" id="cost-input" step="0.01" class="w-full p-3.5 rounded-xl border border-yellow-600/30 bg-zinc-900 text-white outline-none focus:border-yellow-500 placeholder-gray-600" placeholder="Cost of color/lightener used..." required>
+                </div>
+                
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-yellow-600">Formulas & Notes (CRM Memory)</label>
+                    <textarea id="formula-input" class="w-full p-3.5 rounded-xl border border-yellow-600/30 bg-zinc-900 text-white outline-none focus:border-yellow-500 h-28 resize-none placeholder-gray-600" placeholder="Client history will auto-fill here..."></textarea>
+                </div>
+
                 <div class="bg-gradient-to-br from-zinc-800 to-zinc-900 border border-yellow-600/50 p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.5)] mt-8 space-y-3 relative overflow-hidden">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-500/5 rounded-full blur-3xl -mr-10 -mt-10"></div>
-                    <h3 class="text-yellow-500 text-lg border-b border-yellow-600/30 pb-3 mb-4" style="font-family: 'Cormorant Garamond', serif;">Live Calculation</h3>
+                    <h3 class="text-yellow-500 text-lg border-b border-yellow-600/30 pb-3 mb-4" style="font-family: 'Cormorant Garamond', serif;">Final Calculation</h3>
                     
-                    <div class="flex justify-between text-sm font-medium"><span class="text-gray-300">Subtotal:</span><span id="display-subtotal" class="text-white">$0.00</span></div>
-                    <div class="flex justify-between text-sm text-gray-400"><span>Sales Tax (8.25% on Retail):</span><span id="display-tax">$0.00</span></div>
+                    <div class="flex justify-between text-sm text-gray-300"><span>Service + Retail:</span><span id="display-subtotal">$0.00</span></div>
+                    <div class="flex justify-between text-sm text-gray-400"><span>Retail Tax (8.25%):</span><span id="display-tax">$0.00</span></div>
+                    <div class="flex justify-between text-sm text-yellow-500/80"><span>Gratuity:</span><span id="display-tip">$0.00</span></div>
+                    
                     <div class="flex justify-between text-xl font-bold border-t border-yellow-600/30 pt-4 mt-4"><span class="text-white">Charge Client:</span><span id="display-total" class="text-yellow-500">$0.00</span></div>
-                    
-                    <div class="flex justify-between text-xs mt-3 bg-black/40 p-2 rounded-lg border border-yellow-900/30"><span class="text-gray-400 uppercase tracking-wider font-bold">Net Profit:</span><span id="display-profit" class="text-green-400 font-bold">$0.00</span></div>
-                    <div class="flex justify-between text-xs mt-1 bg-black/40 p-2 rounded-lg border border-red-900/30"><span class="text-red-400 uppercase tracking-wider font-bold">Tax Savings (25%):</span><span id="display-withholding" class="text-red-400 font-bold">-$0.00</span></div>
-                    <div class="flex justify-between text-xs mt-1 bg-black/40 p-2 rounded-lg border border-yellow-900/30"><span class="text-white uppercase tracking-wider font-bold">True Take-Home:</span><span id="display-takehome" class="text-white font-bold">$0.00</span></div>
+                    <div class="flex justify-between text-xs mt-4 bg-black/40 p-2 rounded-lg border border-yellow-900/30"><span class="text-gray-400 uppercase tracking-wider font-bold">Net Profit (After Write-off):</span><span id="display-profit" class="text-green-400 font-bold">$0.00</span></div>
                 </div>
 
                 <button type="submit" class="w-full bg-gradient-to-r from-yellow-600 to-yellow-500 text-black font-bold py-4 rounded-xl shadow-[0_0_15px_rgba(234,179,8,0.4)] mt-8 flex items-center justify-center gap-2 text-lg uppercase tracking-wide">
@@ -118,10 +135,36 @@
             </form>
         </div>
 
+        <!-- EXPENSE TAB (PHASE 1 UPGRADE) -->
+        <div id="tab-expense" class="p-5 tab-hidden">
+            <h2 class="text-xl text-red-400 border-b border-red-900/30 pb-3 mb-5 flex items-center gap-3" style="font-family: 'Cormorant Garamond', serif;">
+                <i data-lucide="receipt" class="w-6 h-6"></i> Log Business Expense
+            </h2>
+            <form id="expense-form" class="space-y-5">
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-red-400">Expense Amount ($)</label>
+                    <input type="number" id="expense-amount" step="0.01" class="w-full p-3.5 rounded-xl border border-red-900/30 bg-zinc-900 text-white outline-none focus:border-red-500 text-lg font-bold placeholder-gray-600" placeholder="150.00" required>
+                </div>
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-red-400">Expense Description</label>
+                    <select id="expense-desc" class="w-full p-3.5 rounded-xl border border-red-900/30 bg-zinc-900 text-white outline-none focus:border-red-500" required>
+                        <option value="Weekly Booth Rent">Weekly Booth Rent</option>
+                        <option value="CosmoProf / SalonCentric Supply Run">Bulk Supply Run</option>
+                        <option value="Marketing / Advertising">Marketing / Ads</option>
+                        <option value="Education / Classes">Education</option>
+                        <option value="Miscellaneous Business Expense">Miscellaneous</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-red-600 to-red-500 text-white font-bold py-4 rounded-xl shadow-lg mt-8 flex items-center justify-center gap-2 text-lg uppercase tracking-wide">
+                    <i data-lucide="minus-circle" class="w-6 h-6"></i> Deduct from Ledger
+                </button>
+            </form>
+        </div>
+
         <!-- LEDGER TAB -->
         <div id="tab-ledger" class="p-5 tab-hidden">
             <h2 class="text-xl text-yellow-500 border-b border-yellow-600/30 pb-3 mb-5 flex items-center gap-3" style="font-family: 'Cormorant Garamond', serif;">
-                <i data-lucide="list" class="w-6 h-6"></i> Master Ledger
+                <i data-lucide="list" class="w-6 h-6"></i> Recent Activity
             </h2>
             <div id="ledger-container" class="space-y-5">
                 <!-- Transactions render here -->
@@ -131,188 +174,308 @@
 
     <!-- BOTTOM NAVIGATION -->
     <nav class="bg-zinc-900 border-t border-yellow-900/50 flex justify-around p-2 pb-6 absolute bottom-0 w-full z-20 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
-        <button id="btn-nav-checkout" class="flex flex-col items-center gap-1.5 w-1/3 py-2 rounded-xl text-yellow-500 bg-yellow-500/10 transition-colors">
+        <button id="btn-nav-checkout" class="nav-btn flex flex-col items-center gap-1.5 w-1/3 py-2 rounded-xl text-yellow-500 bg-yellow-500/10 transition-colors" data-target="tab-checkout">
             <i data-lucide="calculator" class="w-6 h-6"></i>
             <span class="text-[10px] font-bold uppercase tracking-widest">Register</span>
         </button>
-        <button id="btn-nav-ledger" class="flex flex-col items-center gap-1.5 w-1/3 py-2 rounded-xl text-gray-500 hover:text-gray-300 transition-colors">
+        <button id="btn-nav-expense" class="nav-btn flex flex-col items-center gap-1.5 w-1/3 py-2 rounded-xl text-gray-500 hover:text-gray-300 transition-colors" data-target="tab-expense">
+            <i data-lucide="receipt" class="w-6 h-6"></i>
+            <span class="text-[10px] font-bold uppercase tracking-widest">Expenses</span>
+        </button>
+        <button id="btn-nav-ledger" class="nav-btn flex flex-col items-center gap-1.5 w-1/3 py-2 rounded-xl text-gray-500 hover:text-gray-300 transition-colors" data-target="tab-ledger">
             <i data-lucide="list" class="w-6 h-6"></i>
             <span class="text-[10px] font-bold uppercase tracking-widest">Ledger</span>
         </button>
     </nav>
 
-    <!-- APP LOGIC -->
     <script>
         lucide.createIcons();
 
         // ------------------------------------------------------------------
-        // GOOGLE APPS SCRIPT URL HARDCODED HERE
+        // NEW GOOGLE APPS SCRIPT URL SECURELY CONNECTED
         // ------------------------------------------------------------------
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwpehnG0SRuD3Bw74V9ZQb6jLDyyLLi02kHgugyIYu5kpRjC4zgUxlgNJRT-6OW38QZ/exec';
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyrGYjJaOJ0FcX3QCRl1I6oyeJzmbwozV5CsGDR2THEqU5tWGwVEZ93r5Y7TPPvtfYH/exec';
 
-        // --- SECURITY PIN LOGIC ---
         const securityScreen = document.getElementById('security-screen');
         const pinForm = document.getElementById('pin-form');
         const pinInput = document.getElementById('pin-input');
         const pinError = document.getElementById('pin-error');
-        const CORRECT_PIN = "1234";
+        const unlockBtn = document.getElementById('unlock-btn');
+
+        let clientHistoryData = {}; // CRM Memory Storage
 
         pinForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            if (pinInput.value === CORRECT_PIN) {
-                securityScreen.classList.add('opacity-0');
-                setTimeout(() => securityScreen.classList.add('hidden'), 500);
+            unlockBtn.innerText = "Verifying...";
+            
+            fetch(`${WEB_APP_URL}?pin=${pinInput.value}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        pinError.classList.remove('hidden');
+                        pinInput.value = '';
+                        unlockBtn.innerText = "Unlock POS";
+                    } else {
+                        securityScreen.classList.add('opacity-0');
+                        setTimeout(() => securityScreen.classList.add('hidden'), 500);
+                        loadDatabase(data);
+                    }
+                })
+                .catch(() => {
+                    pinError.classList.remove('hidden');
+                    unlockBtn.innerText = "Unlock POS";
+                });
+        });
+
+        const clientSelect = document.getElementById('client-select');
+        const serviceSelect = document.getElementById('service-select');
+        const manualClientInput = document.getElementById('manual-client-input');
+        const manualServiceInput = document.getElementById('manual-service-input');
+        const servicePriceInput = document.getElementById('service-price-input');
+        const formulaInput = document.getElementById('formula-input');
+
+        function loadDatabase(data) {
+            clientSelect.innerHTML = '<option value="">-- Choose Client --</option>';
+            serviceSelect.innerHTML = '<option value="None" data-price="0">-- Choose Service --</option>';
+            clientHistoryData = data.history || {}; // Save history globally
+            
+            data.clients.forEach(client => {
+                clientSelect.innerHTML += `<option value="${client}">${client}</option>`;
+            });
+            clientSelect.innerHTML += `<option value="MANUAL_ENTRY" class="text-yellow-500 font-bold">+ Add Custom/Walk-in...</option>`;
+            
+            data.services.forEach(service => {
+                serviceSelect.innerHTML += `<option value="${service.name}" data-price="${service.price}">${service.name}</option>`;
+            });
+            serviceSelect.innerHTML += `<option value="MANUAL_ENTRY" class="text-yellow-500 font-bold">+ Custom Service...</option>`;
+        }
+
+        clientSelect.addEventListener('change', () => {
+            if(clientSelect.value === 'MANUAL_ENTRY') {
+                manualClientInput.classList.remove('hidden');
+                manualClientInput.required = true;
+                formulaInput.value = '';
             } else {
-                pinError.classList.remove('hidden');
-                pinInput.value = '';
-                pinInput.focus();
+                manualClientInput.classList.add('hidden');
+                manualClientInput.required = false;
+                
+                // CRM MEMORY: Auto-fill past formula if it exists
+                if (clientHistoryData[clientSelect.value]) {
+                    formulaInput.value = "[LAST FORMULA]:\n" + clientHistoryData[clientSelect.value] + "\n\n[TODAY]:\n";
+                } else {
+                    formulaInput.value = '';
+                }
             }
         });
 
-        // --- FETCH TWO-WAY DATABASE ---
-        const clientSelect = document.getElementById('client-select');
-        const serviceSelect = document.getElementById('service-select');
-
-        fetch(WEB_APP_URL)
-            .then(response => response.json())
-            .then(data => {
-                clientSelect.innerHTML = '<option value="" data-price="0">-- Choose Client --</option>';
-                serviceSelect.innerHTML = '<option value="None" data-price="0">-- Choose Service --</option>';
-                
-                data.clients.forEach(client => {
-                    clientSelect.innerHTML += `<option value="${client}">${client}</option>`;
-                });
-                
-                data.services.forEach(service => {
-                    serviceSelect.innerHTML += `<option value="${service.name}" data-price="${service.price}">${service.name} - $${parseFloat(service.price).toFixed(2)}</option>`;
-                });
-            })
-            .catch(error => {
-                console.log('Database load error:', error);
-                clientSelect.innerHTML = '<option value="">-- Database Error. Check URL --</option>';
-            });
+        serviceSelect.addEventListener('change', () => {
+            if(serviceSelect.value === 'MANUAL_ENTRY') {
+                manualServiceInput.classList.remove('hidden');
+                manualServiceInput.required = true;
+                servicePriceInput.value = '';
+            } else {
+                manualServiceInput.classList.add('hidden');
+                manualServiceInput.required = false;
+                let defaultPrice = parseFloat(serviceSelect.options[serviceSelect.selectedIndex]?.getAttribute('data-price')) || 0;
+                servicePriceInput.value = defaultPrice > 0 ? defaultPrice.toFixed(2) : '';
+            }
+            updateMath();
+        });
 
         let ledger = [];
 
-        // --- LIVE CALCULATOR LOGIC ---
         const retailSelect = document.getElementById('retail-select');
         const costInput = document.getElementById('cost-input');
+        const tipBtns = document.querySelectorAll('.tip-btn');
+        const customTipInput = document.getElementById('custom-tip-input');
+        let selectedTipPct = 0;
+
+        tipBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                tipBtns.forEach(b => b.classList.remove('tip-active'));
+                e.target.classList.add('tip-active');
+                selectedTipPct = parseFloat(e.target.getAttribute('data-pct')) / 100;
+                customTipInput.value = ''; 
+                updateMath();
+            });
+        });
+
+        customTipInput.addEventListener('input', () => {
+            tipBtns.forEach(b => b.classList.remove('tip-active'));
+            selectedTipPct = 0; 
+            updateMath();
+        });
 
         function updateMath() {
-            let servicePrice = parseFloat(serviceSelect.options[serviceSelect.selectedIndex]?.getAttribute('data-price')) || 0;
+            let servicePrice = parseFloat(servicePriceInput.value) || 0;
             let retailPrice = parseFloat(retailSelect.options[retailSelect.selectedIndex]?.getAttribute('data-price')) || 0;
             let cost = parseFloat(costInput.value) || 0;
 
             let subtotal = servicePrice + retailPrice;
             let tax = (retailPrice > 0) ? (retailPrice * 0.0825) : 0;
-            let grandTotal = subtotal + tax;
+            let tipAmount = customTipInput.value ? parseFloat(customTipInput.value) : (servicePrice * selectedTipPct);
             
+            let grandTotal = subtotal + tax + tipAmount;
             let netProfit = subtotal - cost;
-            let taxSavings = netProfit > 0 ? (netProfit * 0.25) : 0;
-            let takeHome = netProfit - taxSavings;
 
             document.getElementById('display-subtotal').innerText = '$' + subtotal.toFixed(2);
             document.getElementById('display-tax').innerText = '$' + tax.toFixed(2);
+            document.getElementById('display-tip').innerText = '$' + tipAmount.toFixed(2);
             document.getElementById('display-total').innerText = '$' + grandTotal.toFixed(2);
             document.getElementById('display-profit').innerText = '$' + netProfit.toFixed(2);
-            document.getElementById('display-withholding').innerText = '-$' + taxSavings.toFixed(2);
-            document.getElementById('display-takehome').innerText = '$' + takeHome.toFixed(2);
             
-            return { subtotal, tax, grandTotal, netProfit, taxSavings, takeHome, cost };
+            return { subtotal, tax, tipAmount, grandTotal, netProfit, cost, servicePrice, retailPrice };
         }
 
-        serviceSelect.addEventListener('change', updateMath);
+        servicePriceInput.addEventListener('input', updateMath);
         retailSelect.addEventListener('change', updateMath);
         costInput.addEventListener('input', updateMath);
 
-        // --- RENDER LEDGER ---
         const ledgerContainer = document.getElementById('ledger-container');
         function renderLedger() {
             ledgerContainer.innerHTML = '';
             ledger.forEach(tx => {
-                let retailHTML = tx.retail !== 'None' ? `<p><span class="font-semibold text-yellow-600/80">Retail:</span> ${tx.retail}</p>` : '';
-                ledgerContainer.innerHTML += `
-                    <div class="bg-zinc-900 p-5 rounded-2xl shadow-lg border border-yellow-900/30 relative overflow-hidden group">
-                        <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-yellow-500 to-yellow-700"></div>
-                        <div class="flex justify-between items-start border-b border-zinc-800 pb-3 mb-3">
-                            <div>
-                                <h3 class="font-bold text-lg text-white">${tx.client}</h3>
-                                <span class="text-xs text-yellow-600 font-medium tracking-wider">${tx.date} | ${tx.id}</span>
+                if(tx.type === 'expense') {
+                    ledgerContainer.innerHTML += `
+                        <div class="bg-zinc-900 p-5 rounded-2xl shadow-lg border border-red-900/30 relative overflow-hidden">
+                            <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-red-500 to-red-700"></div>
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-bold text-lg text-white">Expense Logged</h3>
+                                    <span class="text-xs text-red-400 font-medium tracking-wider">${tx.date}</span>
+                                </div>
+                                <div class="text-right">
+                                    <span class="block font-bold text-xl text-red-500">-$${parseFloat(tx.amount).toFixed(2)}</span>
+                                </div>
                             </div>
-                            <div class="text-right">
-                                <span class="block font-bold text-xl text-yellow-500">$${tx.total.toFixed(2)}</span>
-                                <span class="text-xs text-green-400 bg-green-400/10 border border-green-400/20 px-2.5 py-1 rounded-full inline-block mt-1 font-bold">Net: $${tx.profit.toFixed(2)}</span>
+                            <p class="text-sm text-gray-300 mt-2">${tx.description}</p>
+                        </div>
+                    `;
+                } else {
+                    let retailHTML = tx.retail !== 'None' ? `<p><span class="font-semibold text-yellow-600/80">Retail:</span> ${tx.retail}</p>` : '';
+                    ledgerContainer.innerHTML += `
+                        <div class="bg-zinc-900 p-5 rounded-2xl shadow-lg border border-yellow-900/30 relative overflow-hidden">
+                            <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-yellow-500 to-yellow-700"></div>
+                            <div class="flex justify-between items-start border-b border-zinc-800 pb-3 mb-3">
+                                <div>
+                                    <h3 class="font-bold text-lg text-white">${tx.client}</h3>
+                                    <span class="text-xs text-yellow-600 font-medium tracking-wider">${tx.date}</span>
+                                </div>
+                                <div class="text-right">
+                                    <span class="block font-bold text-xl text-yellow-500">$${tx.total.toFixed(2)}</span>
+                                    <span class="text-xs text-green-400 bg-green-400/10 border border-green-400/20 px-2.5 py-1 rounded-full inline-block mt-1 font-bold">Net: $${tx.profit.toFixed(2)}</span>
+                                </div>
+                            </div>
+                            <div class="text-sm text-gray-300 space-y-2">
+                                <p><span class="font-semibold text-yellow-600/80">Service:</span> ${tx.service}</p>
+                                ${retailHTML}
+                                <p class="text-xs text-yellow-500/80">Tip Included: $${tx.tip.toFixed(2)}</p>
                             </div>
                         </div>
-                        <div class="text-sm text-gray-300 space-y-2">
-                            <p><span class="font-semibold text-yellow-600/80">Service:</span> ${tx.service}</p>
-                            ${retailHTML}
-                            <p class="bg-black/50 p-3 rounded-lg italic text-xs mt-3 border border-zinc-800 text-gray-400">"${tx.formula}"</p>
-                            <p class="text-[10px] text-gray-500 pt-2 font-mono uppercase tracking-wider">Write-off logged: $${tx.cost.toFixed(2)}</p>
-                        </div>
-                    </div>
-                `;
+                    `;
+                }
             });
         }
-        renderLedger();
 
-        // --- SUBMIT TRANSACTION ---
+        // Handle Expense Submission
+        document.getElementById('expense-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const expAmount = document.getElementById('expense-amount').value;
+            const expDesc = document.getElementById('expense-desc').value;
+
+            const newExp = {
+                type: 'expense',
+                id: 'EXP-' + Math.floor(Math.random() * 10000),
+                amount: expAmount,
+                description: expDesc,
+                date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+            };
+
+            fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(newExp) });
+            ledger.unshift(newExp);
+            renderLedger();
+
+            const overlay = document.getElementById('success-overlay');
+            overlay.classList.remove('tab-hidden');
+            setTimeout(() => {
+                overlay.classList.add('tab-hidden');
+                document.getElementById('expense-form').reset();
+                document.getElementById('btn-nav-ledger').click(); 
+            }, 1500);
+        });
+
+        // Handle Transaction Submission
         document.getElementById('checkout-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const math = updateMath();
             
-            const newTx = {
-                id: 'TX-' + Math.floor(Math.random() * 1000 + 200),
-                date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-                client: clientSelect.value,
-                service: serviceSelect.value,
-                retail: retailSelect.value,
-                formula: document.getElementById('formula-input').value,
-                total: math.grandTotal,
-                profit: math.netProfit,
-                cost: math.cost
-            };
+            let finalClient = clientSelect.value === 'MANUAL_ENTRY' ? manualClientInput.value : clientSelect.value;
+            let finalService = serviceSelect.value === 'MANUAL_ENTRY' ? manualServiceInput.value : serviceSelect.value;
+            let submittedFormula = formulaInput.value;
 
-            // Send to Google Sheets API
-            fetch(WEB_APP_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify(newTx)
-            });
+            const newTx = {
+                type: 'transaction',
+                id: 'TX-' + Math.floor(Math.random() * 10000 + 2000),
+                client: finalClient,
+                service: finalService,
+                servicePrice: math.servicePrice,
+                retail: retailSelect.value,
+                retailPrice: math.retailPrice,
+                tax: math.tax,
+                tip: math.tipAmount,
+                total: math.grandTotal,
+                cost: math.cost,
+                profit: math.netProfit,
+                formula: submittedFormula,
+                date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+            };
+            
+            // Save to local memory immediately for the next visit
+            clientHistoryData[finalClient] = submittedFormula;
+
+            fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(newTx) });
 
             ledger.unshift(newTx);
             renderLedger();
 
             const overlay = document.getElementById('success-overlay');
             overlay.classList.remove('tab-hidden');
-            
             setTimeout(() => {
                 overlay.classList.add('tab-hidden');
                 document.getElementById('checkout-form').reset();
+                manualClientInput.classList.add('hidden');
+                manualServiceInput.classList.add('hidden');
+                tipBtns.forEach(b => b.classList.remove('tip-active'));
+                selectedTipPct = 0;
                 updateMath();
                 document.getElementById('btn-nav-ledger').click(); 
             }, 1500);
         });
 
-        // --- NAVIGATION TABS ---
-        const tabCheckout = document.getElementById('tab-checkout');
-        const tabLedger = document.getElementById('tab-ledger');
-        const btnCheckout = document.getElementById('btn-nav-checkout');
-        const btnLedger = document.getElementById('btn-nav-ledger');
+        // Navigation Engine
+        const navBtns = document.querySelectorAll('.nav-btn');
+        const tabs = ['tab-checkout', 'tab-expense', 'tab-ledger'];
 
-        btnCheckout.addEventListener('click', () => {
-            tabCheckout.classList.remove('tab-hidden');
-            tabLedger.classList.add('tab-hidden');
-            btnCheckout.className = "flex flex-col items-center gap-1.5 w-1/3 py-2 rounded-xl text-yellow-500 bg-yellow-500/10 transition-colors";
-            btnLedger.className = "flex flex-col items-center gap-1.5 w-1/3 py-2 rounded-xl text-gray-500 hover:text-gray-300 transition-colors";
-        });
-
-        btnLedger.addEventListener('click', () => {
-            tabLedger.classList.remove('tab-hidden');
-            tabCheckout.classList.add('tab-hidden');
-            btnLedger.className = "flex flex-col items-center gap-1.5 w-1/3 py-2 rounded-xl text-yellow-500 bg-yellow-500/10 transition-colors";
-            btnCheckout.className = "flex flex-col items-center gap-1.5 w-1/3 py-2 rounded-xl text-gray-500 hover:text-gray-300 transition-colors";
+        navBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const targetId = btn.closest('button').getAttribute('data-target');
+                
+                // Hide all tabs, show target
+                tabs.forEach(tabId => document.getElementById(tabId).classList.add('tab-hidden'));
+                document.getElementById(targetId).classList.remove('tab-hidden');
+                
+                // Reset styling for all buttons
+                navBtns.forEach(b => {
+                    b.className = "nav-btn flex flex-col items-center gap-1.5 w-1/3 py-2 rounded-xl text-gray-500 hover:text-gray-300 transition-colors";
+                });
+                
+                // Highlight active button (Expense uses red, others use yellow)
+                if(targetId === 'tab-expense') {
+                    btn.closest('button').className = "nav-btn flex flex-col items-center gap-1.5 w-1/3 py-2 rounded-xl text-red-500 bg-red-500/10 transition-colors";
+                } else {
+                    btn.closest('button').className = "nav-btn flex flex-col items-center gap-1.5 w-1/3 py-2 rounded-xl text-yellow-500 bg-yellow-500/10 transition-colors";
+                }
+            });
         });
     </script>
 </body>
