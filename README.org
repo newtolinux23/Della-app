@@ -1,0 +1,55 @@
+#+TITLE: Della Curls & Colors - Salon Management Ecosystem
+#+DESCRIPTION: A serverless, zero-cost salon management and point-of-sale ecosystem.
+
+* Overview
+The *Della Curls & Colors - Salon Management Ecosystem* is a fully free, serverless two-part web architecture designed to streamline both client-facing marketing and stylist-facing business operations. Hosted entirely on GitHub Pages with a Google Sheets and Google Apps Script backend, it provides an enterprise-grade toolkit without the burden of monthly subscription fees.
+
+* Tech Stack
+- *Frontend:* HTML5, Tailwind CSS, Vanilla JavaScript
+- *Backend:* Google Apps Script (Serverless REST API)
+- *Database:* Google Sheets
+- *Hosting:* GitHub Pages
+- *Domain Management:* Porkbun (DNS mapping for root and subdomains)
+
+* Features
+
+** Component 1: Link-in-Bio Page (Client-Facing)
+Hosted on the root custom domain at [[https://shondellslaughter.com][shondellslaughter.com]].
+- *Mobile-First UI:* Built with responsive HTML and Tailwind CSS to serve as a fast, digital business card.
+- *Portfolio Showcase:* Features an interactive before-and-after transformation gallery.
+- *Frictionless Booking:* Routes new and returning clients directly to a structured Google Form intake.
+
+** Component 2: Custom POS Application (Stylist-Facing)
+Hosted on the subdomain at [[https://pos.shondellslaughter.com][pos.shondellslaughter.com]].
+- *Secure Access:* Protected by strict server-side PIN authentication.
+- *Command Center Dashboard:* A live financial dashboard that tracks weekly "True Take-Home" pay against a $1,500 goal, automatically calculates a 25% federal tax reserve, and dynamically logs business expenses (e.g., booth rent, supplies).
+- *Smart Tax & Gratuity Logic:* Automatically calculates the Texas state retail tax (8.25%) exclusively on physical products, keeping it completely isolated from service tips.
+- *CRM Memory Engine:* Seamlessly fetches and displays a returning client's previous color formula the moment their name is selected at checkout.
+- *Workflow Automation:*
+  - Instantly deducts retail inventory from the master Google Sheet database upon sale.
+  - Automatically triggers low-stock email alerts to the owner when product counts drop below 2.
+  - Automatically emails beautifully itemized, PDF-style digital receipts directly to clients.
+
+* Deployment Instructions
+
+** 1. Google Sheets & Apps Script (The Backend)
+1. Set up a master Google Sheet containing tabs named =Clients=, =Menu=, =Ledger=, and =Inventory=.
+2. Navigate to *Extensions > Apps Script* and deploy the backend =.gs= code.
+3. Click *Deploy > New Deployment*, select *Web app*, and set access to "Anyone".
+4. Authorize Google permissions (specifically =MailApp= for receipts/alerts) and copy the generated Web App URL.
+
+** 2. GitHub Pages (The Frontend)
+1. Initialize the repository with the Link-in-Bio and POS =index.html= files.
+2. In the POS =index.html= file, paste the copied Google Apps Script URL into the =WEB_APP_URL= constant.
+3. Commit and push the code to the main branch.
+4. Navigate to the repository's *Settings > Pages* and deploy from the main branch.
+
+** 3. DNS Configuration (Porkbun)
+1. *Root Domain:* Configure A Records in Porkbun pointing =shondellslaughter.com= to GitHub Pages IP addresses.
+2. *Subdomain:* Configure a CNAME record for the host =pos= pointing to your =.github.io= URL.
+3. Return to GitHub Pages settings, enter the custom domains, wait for the DNS check to pass, and enforce HTTPS.
+
+* Future Roadmap
+- [ ] Expand inventory logic to track liquid color/developer usage by the ounce.
+- [ ] Integrate the Web Serial API for physical Bluetooth receipt printer and cash drawer support.
+- [ ] Implement an automated SMS follow-up system for client re-booking.
