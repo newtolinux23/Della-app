@@ -111,7 +111,7 @@
                     <input type="text" id="manual-client-input" class="w-full p-3.5 mt-2 rounded-xl border border-yellow-600/30 bg-zinc-800 text-white outline-none focus:border-yellow-500 hidden placeholder-gray-500" placeholder="Type Client Name...">
                 </div>
 
-                <!-- MULTI-SERVICE CART -->
+                <!-- MANUAL MULTI-SERVICE CART -->
                 <div class="space-y-2 bg-zinc-900/50 p-4 rounded-xl border border-yellow-600/20">
                     <label class="block text-xs font-bold uppercase tracking-wider text-yellow-600">Services Rendered</label>
                     
@@ -134,17 +134,28 @@
                     </div>
                 </div>
 
-                <!-- RETAIL CART -->
+                <!-- MANUAL RETAIL CART -->
                 <div class="space-y-2 bg-zinc-900/50 p-4 rounded-xl border border-yellow-600/20">
                     <label class="block text-xs font-bold uppercase tracking-wider text-yellow-600">Retail Products</label>
-                    <div class="flex gap-2">
-                        <select id="retail-select" class="flex-1 p-3 rounded-lg border border-yellow-600/30 bg-zinc-800 text-white outline-none focus:border-yellow-500 text-sm">
-                            <option value="None" data-price="0">-- Select Product --</option>
-                            <!-- Fetched from Google Sheet -->
-                        </select>
-                        <input type="number" id="retail-qty" value="1" min="1" class="w-16 p-3 rounded-lg border border-yellow-600/30 bg-zinc-800 text-white text-center outline-none focus:border-yellow-500">
+                    
+                    <select id="retail-select" class="w-full p-3.5 rounded-xl border border-yellow-600/30 bg-zinc-900 text-white outline-none focus:border-yellow-500 text-sm">
+                        <option value="None" data-price="0">-- Select Product --</option>
+                    </select>
+                    
+                    <input type="text" id="manual-retail-input" class="w-full p-3.5 mt-2 rounded-xl border border-yellow-600/30 bg-zinc-800 text-white outline-none focus:border-yellow-500 hidden placeholder-gray-500" placeholder="Type Custom Product...">
+                    
+                    <div class="flex gap-2 mt-2">
+                        <div class="relative flex-1">
+                            <span class="absolute left-4 top-3.5 text-gray-400">$</span>
+                            <input type="number" id="retail-price-input" step="0.01" class="w-full p-3.5 pl-8 rounded-lg border border-yellow-600/30 bg-zinc-800 text-white outline-none focus:border-yellow-500" placeholder="Price">
+                        </div>
+                        <div class="relative w-20">
+                            <span class="absolute left-3 top-3.5 text-gray-400 text-xs mt-0.5">Qty</span>
+                            <input type="number" id="retail-qty" value="1" min="1" class="w-full p-3.5 pl-9 rounded-lg border border-yellow-600/30 bg-zinc-800 text-white outline-none focus:border-yellow-500 text-center">
+                        </div>
                         <button type="button" id="btn-add-retail" class="bg-yellow-600 text-black font-bold px-4 rounded-lg hover:bg-yellow-500 transition-colors">Add</button>
                     </div>
+                    
                     <div id="retail-cart-container" class="mt-3 space-y-2 empty:hidden">
                         <!-- Retail items appear here -->
                     </div>
@@ -159,11 +170,6 @@
                         <button type="button" class="tip-btn p-3 rounded-lg border border-yellow-600/30 bg-zinc-900 text-white text-sm transition-colors" data-pct="25">25%</button>
                         <input type="number" id="custom-tip-input" step="0.01" class="p-3 rounded-lg border border-yellow-600/30 bg-zinc-900 text-white text-sm outline-none focus:border-yellow-500 text-center placeholder-gray-500" placeholder="Cust $">
                     </div>
-                </div>
-                
-                <div class="space-y-1.5 pt-2">
-                    <label class="block text-xs font-bold uppercase tracking-wider text-yellow-600">Client Email (Optional)</label>
-                    <input type="email" id="client-email-input" class="w-full p-3.5 rounded-xl border border-yellow-600/30 bg-zinc-900 text-white outline-none focus:border-yellow-500 placeholder-gray-600" placeholder="client@email.com">
                 </div>
 
                 <div class="space-y-1.5 pt-2">
@@ -268,9 +274,9 @@
         lucide.createIcons();
 
         // ------------------------------------------------------------------
-        // VERSION 10 GOOGLE APPS SCRIPT URL
+        // VERSION 11 GOOGLE APPS SCRIPT URL
         // ------------------------------------------------------------------
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzWgda6ic-4aUeITMViLPcXKFw2J9q9eDAV2gsv_Lc5J4XR8oyLAeKkszAx73dB1-lq/exec';
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxTkhBJNcjSM24ykUW74HS6wnhooNIklDYHEyzodiurDuqkhrzT0CjliMHCHo0ZMuiQ/exec';
 
         const securityScreen = document.getElementById('security-screen');
         const pinForm = document.getElementById('pin-form');
@@ -338,7 +344,6 @@
         const clientSelect = document.getElementById('client-select');
         const manualClientInput = document.getElementById('manual-client-input');
         const formulaInput = document.getElementById('formula-input');
-        const emailInput = document.getElementById('client-email-input');
 
         function loadDatabase(data) {
             clientSelect.innerHTML = '<option value="">-- Choose Client --</option>';
@@ -368,6 +373,7 @@
                     retailSelect.innerHTML += `<option value="${item.name}" data-price="${item.price}">${item.name} - $${item.price.toFixed(2)}</option>`;
                 });
             }
+            retailSelect.innerHTML += `<option value="MANUAL_ENTRY" class="text-yellow-500 font-bold">+ Custom Product...</option>`;
         }
 
         clientSelect.addEventListener('change', () => {
@@ -385,7 +391,7 @@
         });
 
         // ------------------------------------------------------------------
-        // MULTI-SERVICE CART LOGIC
+        // MULTI-SERVICE CART LOGIC (MANUAL ENABLED)
         // ------------------------------------------------------------------
         let serviceCart = [];
         const serviceSelect = document.getElementById('service-select');
@@ -457,28 +463,55 @@
         };
 
         // ------------------------------------------------------------------
-        // RETAIL CART LOGIC
+        // RETAIL CART LOGIC (MANUAL ENABLED)
         // ------------------------------------------------------------------
         let retailCart = [];
+        const retailSelect = document.getElementById('retail-select');
+        const manualRetailInput = document.getElementById('manual-retail-input');
+        const retailPriceInput = document.getElementById('retail-price-input');
+        const qtyInput = document.getElementById('retail-qty');
+
+        retailSelect.addEventListener('change', () => {
+            if(retailSelect.value === 'MANUAL_ENTRY') {
+                manualRetailInput.classList.remove('hidden');
+                retailPriceInput.value = '';
+            } else {
+                manualRetailInput.classList.add('hidden');
+                let defaultPrice = parseFloat(retailSelect.options[retailSelect.selectedIndex]?.getAttribute('data-price')) || 0;
+                retailPriceInput.value = defaultPrice > 0 ? defaultPrice.toFixed(2) : '';
+            }
+        });
 
         document.getElementById('btn-add-retail').addEventListener('click', () => {
-            const select = document.getElementById('retail-select');
-            const qtyInput = document.getElementById('retail-qty');
+            let name = retailSelect.value;
             const qty = parseInt(qtyInput.value) || 1;
-            const name = select.value;
 
-            if (name === "None" || name === "") return;
+            if (name === 'MANUAL_ENTRY') {
+                name = manualRetailInput.value.trim();
+            }
 
-            const price = parseFloat(select.options[select.selectedIndex].getAttribute('data-price')) || 0;
+            if (!name || name === "None") {
+                alert("⚠️ Please select or type a product name before adding.");
+                return;
+            }
 
-            const existing = retailCart.find(item => item.name === name);
+            let price = parseFloat(retailPriceInput.value);
+            if (isNaN(price) || price < 0) {
+                alert("⚠️ Please enter a valid price for this product.");
+                return;
+            }
+
+            const existing = retailCart.find(item => item.name === name && item.price === price);
             if (existing) {
                 existing.qty += qty;
             } else {
                 retailCart.push({ name, price, qty });
             }
 
-            select.value = "None";
+            retailSelect.value = "None";
+            manualRetailInput.value = '';
+            manualRetailInput.classList.add('hidden');
+            retailPriceInput.value = '';
             qtyInput.value = 1;
 
             renderRetailCart();
@@ -672,7 +705,6 @@
             // Build Transaction Payload
             const math = updateMath();
             let submittedFormula = formulaInput.value;
-            let clientEmail = emailInput.value;
 
             const newTx = {
                 type: 'transaction',
@@ -688,7 +720,6 @@
                 cost: math.cost,
                 profit: math.netProfit,
                 formula: submittedFormula,
-                email: clientEmail,
                 date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
             };
             
@@ -713,7 +744,7 @@
                 document.getElementById('checkout-form').reset();
                 manualClientInput.classList.add('hidden');
                 manualServiceInput.classList.add('hidden');
-                emailInput.value = '';
+                manualRetailInput.classList.add('hidden');
                 
                 // Reset arrays and UI
                 serviceCart = [];
