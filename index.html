@@ -171,7 +171,7 @@
                         <input type="number" id="custom-tip-input" step="0.01" class="p-3 rounded-lg border border-yellow-600/30 bg-zinc-900 text-white text-sm outline-none focus:border-yellow-500 text-center placeholder-gray-500" placeholder="Cust $">
                     </div>
                 </div>
-
+                
                 <div class="space-y-1.5 pt-2">
                     <label class="block text-xs font-bold uppercase tracking-wider text-yellow-600">Product Cost / Write-Off ($)</label>
                     <input type="number" id="cost-input" step="0.01" class="w-full p-3.5 rounded-xl border border-yellow-600/30 bg-zinc-900 text-white outline-none focus:border-yellow-500 placeholder-gray-600" placeholder="Cost of color/lightener used...">
@@ -274,9 +274,9 @@
         lucide.createIcons();
 
         // ------------------------------------------------------------------
-        // VERSION 11 GOOGLE APPS SCRIPT URL
+        // VERSION 12 GOOGLE APPS SCRIPT URL
         // ------------------------------------------------------------------
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxTkhBJNcjSM24ykUW74HS6wnhooNIklDYHEyzodiurDuqkhrzT0CjliMHCHo0ZMuiQ/exec';
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwYR0j8h1YyMMJaGHwqbOs1lvfXAQpCWFDTgDFdSAEVq2lSW4f97KXWJem6vDZahyYo/exec';
 
         const securityScreen = document.getElementById('security-screen');
         const pinForm = document.getElementById('pin-form');
@@ -286,6 +286,7 @@
 
         let clientHistoryData = {}; 
         let globalDashStats = { gross: 0, net: 0, tips: 0, expenses: 0 }; 
+        let ledger = []; 
 
         pinForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -356,6 +357,12 @@
             clientHistoryData = data.history || {}; 
             globalDashStats = data.dashboard || { gross: 0, net: 0, tips: 0, expenses: 0 };
             
+            // --- NEW: INGEST RECENT ACTIVITY FROM BACKEND ---
+            if (data.recentActivity && data.recentActivity.length > 0) {
+                ledger = data.recentActivity;
+                renderLedger();
+            }
+            
             updateDashboardUI(); 
 
             data.clients.forEach(client => {
@@ -391,7 +398,7 @@
         });
 
         // ------------------------------------------------------------------
-        // MULTI-SERVICE CART LOGIC (MANUAL ENABLED)
+        // MULTI-SERVICE CART LOGIC 
         // ------------------------------------------------------------------
         let serviceCart = [];
         const serviceSelect = document.getElementById('service-select');
@@ -463,7 +470,7 @@
         };
 
         // ------------------------------------------------------------------
-        // RETAIL CART LOGIC (MANUAL ENABLED)
+        // RETAIL CART LOGIC 
         // ------------------------------------------------------------------
         let retailCart = [];
         const retailSelect = document.getElementById('retail-select');
@@ -595,8 +602,6 @@
         }
 
         costInput.addEventListener('input', updateMath);
-
-        let ledger = []; 
         
         const ledgerContainer = document.getElementById('ledger-container');
         function renderLedger() {
@@ -619,10 +624,11 @@
                         </div>
                     `;
                 } else {
-                    let displayRetail = tx.retailItems && tx.retailItems.length > 0 ? tx.retailItems.map(item => `${item.name} (x${item.qty})`).join(', ') : "None";
+                    // --- HANDLE BOTH BACKEND STRINGS AND LOCAL ARRAYS ---
+                    let displayRetail = tx.displayRetail || (tx.retailItems && tx.retailItems.length > 0 ? tx.retailItems.map(item => `${item.name} (x${item.qty})`).join(', ') : "None");
                     let retailHTML = displayRetail !== 'None' ? `<p><span class="font-semibold text-yellow-600/80">Retail:</span> ${displayRetail}</p>` : '';
                     
-                    let displayService = tx.serviceItems && tx.serviceItems.length > 0 ? tx.serviceItems.map(item => item.name).join(', ') : "None";
+                    let displayService = tx.displayService || (tx.serviceItems && tx.serviceItems.length > 0 ? tx.serviceItems.map(item => item.name).join(', ') : "None");
 
                     ledgerContainer.innerHTML += `
                         <div class="bg-zinc-900 p-5 rounded-2xl shadow-lg border border-yellow-900/30 relative overflow-hidden">
