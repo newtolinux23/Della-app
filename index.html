@@ -134,15 +134,13 @@
                     </div>
                 </div>
 
-                <!-- RETAIL CART -->
+                <!-- RETAIL CART (NOW DYNAMICALLY LOADED) -->
                 <div class="space-y-2 bg-zinc-900/50 p-4 rounded-xl border border-yellow-600/20">
                     <label class="block text-xs font-bold uppercase tracking-wider text-yellow-600">Retail Products</label>
                     <div class="flex gap-2">
                         <select id="retail-select" class="flex-1 p-3 rounded-lg border border-yellow-600/30 bg-zinc-800 text-white outline-none focus:border-yellow-500 text-sm">
                             <option value="None" data-price="0">-- Select Product --</option>
-                            <option value="Hydrating Curl Cream" data-price="28">Hydrating Curl Cream - $28</option>
-                            <option value="Salon Shampoo" data-price="20">Salon Shampoo - $20</option>
-                            <option value="Styling Gel" data-price="25">Styling Gel - $25</option>
+                            <!-- Fetched from Google Sheet -->
                         </select>
                         <input type="number" id="retail-qty" value="1" min="1" class="w-16 p-3 rounded-lg border border-yellow-600/30 bg-zinc-800 text-white text-center outline-none focus:border-yellow-500">
                         <button type="button" id="btn-add-retail" class="bg-yellow-600 text-black font-bold px-4 rounded-lg hover:bg-yellow-500 transition-colors">Add</button>
@@ -270,9 +268,9 @@
         lucide.createIcons();
 
         // ------------------------------------------------------------------
-        // GOOGLE APPS SCRIPT URL
+        // VERSION 9 GOOGLE APPS SCRIPT URL
         // ------------------------------------------------------------------
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwB52LeBpUDy9R6KZcAgBy0bHigHT0QbOly-ksWFJsc62Vkr8MKdJZaOwqYNmdFsAnO/exec';
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby8p5tFw-5WiAbmd9S91048PljhB_IMcxAq5mAggMg6W-IejmW0I67gKxmJmqPOLI4D/exec';
 
         const securityScreen = document.getElementById('security-screen');
         const pinForm = document.getElementById('pin-form');
@@ -347,6 +345,10 @@
             const serviceSelect = document.getElementById('service-select');
             serviceSelect.innerHTML = '<option value="None" data-price="0">-- Select Service --</option>';
             
+            // --- NEW: DYNAMIC RETAIL LOADING ---
+            const retailSelect = document.getElementById('retail-select');
+            retailSelect.innerHTML = '<option value="None" data-price="0">-- Select Product --</option>';
+            
             clientHistoryData = data.history || {}; 
             globalDashStats = data.dashboard || { gross: 0, net: 0, tips: 0, expenses: 0 };
             
@@ -361,6 +363,13 @@
                 serviceSelect.innerHTML += `<option value="${service.name}" data-price="${service.price}">${service.name}</option>`;
             });
             serviceSelect.innerHTML += `<option value="MANUAL_ENTRY" class="text-yellow-500 font-bold">+ Custom Service...</option>`;
+
+            // --- NEW: INJECT INVENTORY INTO RETAIL DROPDOWN ---
+            if(data.inventory && data.inventory.length > 0) {
+                data.inventory.forEach(item => {
+                    retailSelect.innerHTML += `<option value="${item.name}" data-price="${item.price}">${item.name} - $${item.price.toFixed(2)}</option>`;
+                });
+            }
         }
 
         clientSelect.addEventListener('change', () => {
@@ -556,7 +565,6 @@
 
         costInput.addEventListener('input', updateMath);
 
-        // --- THE MISSING LINE THAT CRASHED THE SUBMIT BUTTON HAS BEEN RESTORED ---
         let ledger = []; 
         
         const ledgerContainer = document.getElementById('ledger-container');
