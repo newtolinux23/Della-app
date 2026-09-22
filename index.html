@@ -134,7 +134,7 @@
                     </div>
                 </div>
 
-                <!-- RETAIL CART (NOW DYNAMICALLY LOADED) -->
+                <!-- RETAIL CART -->
                 <div class="space-y-2 bg-zinc-900/50 p-4 rounded-xl border border-yellow-600/20">
                     <label class="block text-xs font-bold uppercase tracking-wider text-yellow-600">Retail Products</label>
                     <div class="flex gap-2">
@@ -268,9 +268,9 @@
         lucide.createIcons();
 
         // ------------------------------------------------------------------
-        // VERSION 9 GOOGLE APPS SCRIPT URL
+        // VERSION 10 GOOGLE APPS SCRIPT URL
         // ------------------------------------------------------------------
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby8p5tFw-5WiAbmd9S91048PljhB_IMcxAq5mAggMg6W-IejmW0I67gKxmJmqPOLI4D/exec';
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzWgda6ic-4aUeITMViLPcXKFw2J9q9eDAV2gsv_Lc5J4XR8oyLAeKkszAx73dB1-lq/exec';
 
         const securityScreen = document.getElementById('security-screen');
         const pinForm = document.getElementById('pin-form');
@@ -345,7 +345,6 @@
             const serviceSelect = document.getElementById('service-select');
             serviceSelect.innerHTML = '<option value="None" data-price="0">-- Select Service --</option>';
             
-            // --- NEW: DYNAMIC RETAIL LOADING ---
             const retailSelect = document.getElementById('retail-select');
             retailSelect.innerHTML = '<option value="None" data-price="0">-- Select Product --</option>';
             
@@ -364,7 +363,6 @@
             });
             serviceSelect.innerHTML += `<option value="MANUAL_ENTRY" class="text-yellow-500 font-bold">+ Custom Service...</option>`;
 
-            // --- NEW: INJECT INVENTORY INTO RETAIL DROPDOWN ---
             if(data.inventory && data.inventory.length > 0) {
                 data.inventory.forEach(item => {
                     retailSelect.innerHTML += `<option value="${item.name}" data-price="${item.price}">${item.name} - $${item.price.toFixed(2)}</option>`;
