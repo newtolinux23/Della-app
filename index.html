@@ -94,7 +94,7 @@
             </div>
         </div>
 
-        <!-- CHECKOUT TAB (NOVALIDATE OVERRIDE ADDED) -->
+        <!-- CHECKOUT TAB -->
         <div id="tab-checkout" class="p-5 space-y-6 tab-hidden">
             <h2 class="text-xl text-yellow-500 border-b border-yellow-600/30 pb-3 flex items-center gap-3" style="font-family: 'Cormorant Garamond', serif;">
                 <i data-lucide="calculator" class="w-6 h-6"></i> New Transaction
@@ -556,6 +556,9 @@
 
         costInput.addEventListener('input', updateMath);
 
+        // --- THE MISSING LINE THAT CRASHED THE SUBMIT BUTTON HAS BEEN RESTORED ---
+        let ledger = []; 
+        
         const ledgerContainer = document.getElementById('ledger-container');
         function renderLedger() {
             ledgerContainer.innerHTML = '';
