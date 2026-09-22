@@ -94,13 +94,13 @@
             </div>
         </div>
 
-        <!-- CHECKOUT TAB -->
+        <!-- CHECKOUT TAB (NOVALIDATE OVERRIDE ADDED) -->
         <div id="tab-checkout" class="p-5 space-y-6 tab-hidden">
             <h2 class="text-xl text-yellow-500 border-b border-yellow-600/30 pb-3 flex items-center gap-3" style="font-family: 'Cormorant Garamond', serif;">
                 <i data-lucide="calculator" class="w-6 h-6"></i> New Transaction
             </h2>
             
-            <form id="checkout-form" class="space-y-5">
+            <form id="checkout-form" class="space-y-5" novalidate>
                 
                 <!-- CLIENT SELECTION -->
                 <div class="space-y-1.5">
@@ -270,7 +270,7 @@
         lucide.createIcons();
 
         // ------------------------------------------------------------------
-        // BRAND NEW GOOGLE APPS SCRIPT URL SECURELY CONNECTED
+        // GOOGLE APPS SCRIPT URL
         // ------------------------------------------------------------------
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwB52LeBpUDy9R6KZcAgBy0bHigHT0QbOly-ksWFJsc62Vkr8MKdJZaOwqYNmdFsAnO/exec';
 
@@ -378,7 +378,7 @@
         });
 
         // ------------------------------------------------------------------
-        // NEW MULTI-SERVICE CART LOGIC
+        // MULTI-SERVICE CART LOGIC
         // ------------------------------------------------------------------
         let serviceCart = [];
         const serviceSelect = document.getElementById('service-select');
@@ -641,9 +641,9 @@
         // BULLETPROOF SUBMISSION HANDLER
         // ------------------------------------------------------------------
         document.getElementById('checkout-form').addEventListener('submit', function(e) {
-            e.preventDefault(); // Stop strict HTML submission immediately
+            e.preventDefault(); 
             
-            // 1. Explicit Validation Alerts
+            // Explicit Validation Alerts
             let finalClient = clientSelect.value === 'MANUAL_ENTRY' ? manualClientInput.value.trim() : clientSelect.value;
             if (!finalClient) {
                 alert("⚠️ Please select a client or enter a walk-in name.");
@@ -660,7 +660,7 @@
                 return;
             }
 
-            // 2. Build Transaction Payload
+            // Build Transaction Payload
             const math = updateMath();
             let submittedFormula = formulaInput.value;
             let clientEmail = emailInput.value;
@@ -683,26 +683,27 @@
                 date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
             };
             
-            // 3. Update UI Memory
+            // Update UI Memory
             clientHistoryData[finalClient] = submittedFormula;
             globalDashStats.gross += math.grandTotal;
             globalDashStats.tips += math.tipAmount;
             globalDashStats.net += math.netProfit;
             updateDashboardUI();
 
-            // 4. Send to Google Sheets
+            // Send to Google Sheets
             fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(newTx) });
 
             ledger.unshift(newTx);
             renderLedger();
 
-            // 5. Success Animation & Reset
+            // Success Animation & Reset
             const overlay = document.getElementById('success-overlay');
             overlay.classList.remove('tab-hidden');
             setTimeout(() => {
                 overlay.classList.add('tab-hidden');
                 document.getElementById('checkout-form').reset();
                 manualClientInput.classList.add('hidden');
+                manualServiceInput.classList.add('hidden');
                 emailInput.value = '';
                 
                 // Reset arrays and UI
