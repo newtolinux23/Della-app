@@ -101,30 +101,42 @@
             </h2>
             
             <form id="checkout-form" class="space-y-5">
+                
+                <!-- CLIENT SELECTION -->
                 <div class="space-y-1.5">
                     <label class="block text-xs font-bold uppercase tracking-wider text-yellow-600">Select Client</label>
-                    <select id="client-select" class="w-full p-3.5 rounded-xl border border-yellow-600/30 bg-zinc-900 text-white outline-none focus:border-yellow-500" required>
+                    <select id="client-select" class="w-full p-3.5 rounded-xl border border-yellow-600/30 bg-zinc-900 text-white outline-none focus:border-yellow-500">
                         <option value="">-- Awaiting PIN Unlock --</option>
                     </select>
                     <input type="text" id="manual-client-input" class="w-full p-3.5 mt-2 rounded-xl border border-yellow-600/30 bg-zinc-800 text-white outline-none focus:border-yellow-500 hidden placeholder-gray-500" placeholder="Type Client Name...">
                 </div>
 
-                <div class="space-y-1.5">
-                    <label class="block text-xs font-bold uppercase tracking-wider text-yellow-600">Primary Service</label>
-                    <select id="service-select" class="w-full p-3.5 rounded-xl border border-yellow-600/30 bg-zinc-900 text-white outline-none focus:border-yellow-500" required>
-                        <option value="None" data-price="0">-- Awaiting PIN Unlock --</option>
+                <!-- MULTI-SERVICE CART -->
+                <div class="space-y-2 bg-zinc-900/50 p-4 rounded-xl border border-yellow-600/20">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-yellow-600">Services Rendered</label>
+                    
+                    <select id="service-select" class="w-full p-3.5 rounded-xl border border-yellow-600/30 bg-zinc-900 text-white outline-none focus:border-yellow-500 text-sm">
+                        <option value="None" data-price="0">-- Select Service --</option>
                     </select>
+                    
                     <input type="text" id="manual-service-input" class="w-full p-3.5 mt-2 rounded-xl border border-yellow-600/30 bg-zinc-800 text-white outline-none focus:border-yellow-500 hidden placeholder-gray-500" placeholder="Type Custom Service...">
+                    
+                    <div class="flex gap-2 mt-2">
+                        <div class="relative flex-1">
+                            <span class="absolute left-4 top-3.5 text-gray-400">$</span>
+                            <input type="number" id="service-price-input" step="0.01" class="w-full p-3.5 pl-8 rounded-lg border border-yellow-600/30 bg-zinc-800 text-white outline-none focus:border-yellow-500" placeholder="0.00">
+                        </div>
+                        <button type="button" id="btn-add-service" class="bg-yellow-600 text-black font-bold px-6 rounded-lg hover:bg-yellow-500 transition-colors">Add</button>
+                    </div>
+                    
+                    <div id="service-cart-container" class="mt-3 space-y-2 empty:hidden">
+                        <!-- Added services appear here -->
+                    </div>
                 </div>
 
-                <div class="space-y-1.5">
-                    <label class="block text-xs font-bold uppercase tracking-wider text-yellow-600">Service Price ($)</label>
-                    <input type="number" id="service-price-input" step="0.01" class="w-full p-3.5 rounded-xl border border-yellow-600/30 bg-zinc-900 text-white outline-none focus:border-yellow-500 text-lg font-bold placeholder-gray-600" placeholder="0.00" required>
-                </div>
-
-                <!-- NEW RETAIL SHOPPING CART UI -->
-                <div class="space-y-1.5 bg-zinc-900/50 p-4 rounded-xl border border-yellow-600/20">
-                    <label class="block text-xs font-bold uppercase tracking-wider text-yellow-600 mb-2">Retail Products</label>
+                <!-- RETAIL CART -->
+                <div class="space-y-2 bg-zinc-900/50 p-4 rounded-xl border border-yellow-600/20">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-yellow-600">Retail Products</label>
                     <div class="flex gap-2">
                         <select id="retail-select" class="flex-1 p-3 rounded-lg border border-yellow-600/30 bg-zinc-800 text-white outline-none focus:border-yellow-500 text-sm">
                             <option value="None" data-price="0">-- Select Product --</option>
@@ -136,10 +148,11 @@
                         <button type="button" id="btn-add-retail" class="bg-yellow-600 text-black font-bold px-4 rounded-lg hover:bg-yellow-500 transition-colors">Add</button>
                     </div>
                     <div id="retail-cart-container" class="mt-3 space-y-2 empty:hidden">
-                        <!-- Items added to cart will appear here -->
+                        <!-- Retail items appear here -->
                     </div>
                 </div>
 
+                <!-- GRATUITY -->
                 <div class="space-y-2 pt-2">
                     <label class="block text-xs font-bold uppercase tracking-wider text-yellow-600">Add Gratuity</label>
                     <div class="grid grid-cols-4 gap-2">
@@ -151,13 +164,13 @@
                 </div>
                 
                 <div class="space-y-1.5 pt-2">
-                    <label class="block text-xs font-bold uppercase tracking-wider text-yellow-600">Client Email (Optional - For Receipt)</label>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-yellow-600">Client Email (Optional)</label>
                     <input type="email" id="client-email-input" class="w-full p-3.5 rounded-xl border border-yellow-600/30 bg-zinc-900 text-white outline-none focus:border-yellow-500 placeholder-gray-600" placeholder="client@email.com">
                 </div>
 
                 <div class="space-y-1.5 pt-2">
                     <label class="block text-xs font-bold uppercase tracking-wider text-yellow-600">Product Cost / Write-Off ($)</label>
-                    <input type="number" id="cost-input" step="0.01" class="w-full p-3.5 rounded-xl border border-yellow-600/30 bg-zinc-900 text-white outline-none focus:border-yellow-500 placeholder-gray-600" placeholder="Cost of color/lightener used..." required>
+                    <input type="number" id="cost-input" step="0.01" class="w-full p-3.5 rounded-xl border border-yellow-600/30 bg-zinc-900 text-white outline-none focus:border-yellow-500 placeholder-gray-600" placeholder="Cost of color/lightener used...">
                 </div>
                 
                 <div class="space-y-1.5">
@@ -165,6 +178,7 @@
                     <textarea id="formula-input" class="w-full p-3.5 rounded-xl border border-yellow-600/30 bg-zinc-900 text-white outline-none focus:border-yellow-500 h-28 resize-none placeholder-gray-600" placeholder="Client history will auto-fill here..."></textarea>
                 </div>
 
+                <!-- LIVE MATH PANEL -->
                 <div class="bg-gradient-to-br from-zinc-800 to-zinc-900 border border-yellow-600/50 p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.5)] mt-8 space-y-3 relative overflow-hidden">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-500/5 rounded-full blur-3xl -mr-10 -mt-10"></div>
                     <h3 class="text-yellow-500 text-lg border-b border-yellow-600/30 pb-3 mb-4" style="font-family: 'Cormorant Garamond', serif;">Final Calculation</h3>
@@ -258,7 +272,7 @@
         // ------------------------------------------------------------------
         // BRAND NEW GOOGLE APPS SCRIPT URL SECURELY CONNECTED
         // ------------------------------------------------------------------
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyr4XEEYcDRXUoS47QdBsr57LgN8PsgTZ0W1Y1rzEzAWjia_ZMa_Qv08fgOMZdCUy19/exec';
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwB52LeBpUDy9R6KZcAgBy0bHigHT0QbOly-ksWFJsc62Vkr8MKdJZaOwqYNmdFsAnO/exec';
 
         const securityScreen = document.getElementById('security-screen');
         const pinForm = document.getElementById('pin-form');
@@ -324,16 +338,14 @@
         }
 
         const clientSelect = document.getElementById('client-select');
-        const serviceSelect = document.getElementById('service-select');
         const manualClientInput = document.getElementById('manual-client-input');
-        const manualServiceInput = document.getElementById('manual-service-input');
-        const servicePriceInput = document.getElementById('service-price-input');
         const formulaInput = document.getElementById('formula-input');
         const emailInput = document.getElementById('client-email-input');
 
         function loadDatabase(data) {
             clientSelect.innerHTML = '<option value="">-- Choose Client --</option>';
-            serviceSelect.innerHTML = '<option value="None" data-price="0">-- Choose Service --</option>';
+            const serviceSelect = document.getElementById('service-select');
+            serviceSelect.innerHTML = '<option value="None" data-price="0">-- Select Service --</option>';
             
             clientHistoryData = data.history || {}; 
             globalDashStats = data.dashboard || { gross: 0, net: 0, tips: 0, expenses: 0 };
@@ -354,11 +366,9 @@
         clientSelect.addEventListener('change', () => {
             if(clientSelect.value === 'MANUAL_ENTRY') {
                 manualClientInput.classList.remove('hidden');
-                manualClientInput.required = true;
                 formulaInput.value = '';
             } else {
                 manualClientInput.classList.add('hidden');
-                manualClientInput.required = false;
                 if (clientHistoryData[clientSelect.value]) {
                     formulaInput.value = "[LAST FORMULA]:\n" + clientHistoryData[clientSelect.value] + "\n\n[TODAY]:\n";
                 } else {
@@ -367,22 +377,80 @@
             }
         });
 
+        // ------------------------------------------------------------------
+        // NEW MULTI-SERVICE CART LOGIC
+        // ------------------------------------------------------------------
+        let serviceCart = [];
+        const serviceSelect = document.getElementById('service-select');
+        const manualServiceInput = document.getElementById('manual-service-input');
+        const servicePriceInput = document.getElementById('service-price-input');
+
         serviceSelect.addEventListener('change', () => {
             if(serviceSelect.value === 'MANUAL_ENTRY') {
                 manualServiceInput.classList.remove('hidden');
-                manualServiceInput.required = true;
                 servicePriceInput.value = '';
             } else {
                 manualServiceInput.classList.add('hidden');
-                manualServiceInput.required = false;
                 let defaultPrice = parseFloat(serviceSelect.options[serviceSelect.selectedIndex]?.getAttribute('data-price')) || 0;
                 servicePriceInput.value = defaultPrice > 0 ? defaultPrice.toFixed(2) : '';
             }
+        });
+
+        document.getElementById('btn-add-service').addEventListener('click', () => {
+            let name = serviceSelect.value;
+            if (name === 'MANUAL_ENTRY') {
+                name = manualServiceInput.value.trim();
+            }
+            
+            if (!name || name === "None") {
+                alert("⚠️ Please select or type a service name before adding.");
+                return;
+            }
+
+            let price = parseFloat(servicePriceInput.value);
+            if (isNaN(price) || price < 0) {
+                alert("⚠️ Please enter a valid price for this service.");
+                return;
+            }
+
+            serviceCart.push({ name, price });
+
+            serviceSelect.value = "None";
+            manualServiceInput.value = '';
+            manualServiceInput.classList.add('hidden');
+            servicePriceInput.value = '';
+
+            renderServiceCart();
             updateMath();
         });
 
+        function renderServiceCart() {
+            const container = document.getElementById('service-cart-container');
+            container.innerHTML = '';
+            serviceCart.forEach((item, index) => {
+                container.innerHTML += `
+                    <div class="flex justify-between items-center bg-black/40 p-2 rounded-lg border border-yellow-600/30">
+                        <span class="text-sm text-gray-200">${item.name}</span>
+                        <div class="flex items-center gap-4">
+                            <span class="text-sm font-bold text-white">$${item.price.toFixed(2)}</span>
+                            <button type="button" onclick="removeServiceFromCart(${index})" class="text-red-400 hover:text-red-300">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            lucide.createIcons();
+        }
+
+        window.removeServiceFromCart = function(index) {
+            serviceCart.splice(index, 1);
+            renderServiceCart();
+            updateMath();
+        };
+
         // ------------------------------------------------------------------
-        // NEW RETAIL CART LOGIC
+        // RETAIL CART LOGIC
         // ------------------------------------------------------------------
         let retailCart = [];
 
@@ -396,7 +464,6 @@
 
             const price = parseFloat(select.options[select.selectedIndex].getAttribute('data-price')) || 0;
 
-            // Check if item already exists in cart, just increase quantity
             const existing = retailCart.find(item => item.name === name);
             if (existing) {
                 existing.qty += qty;
@@ -404,15 +471,14 @@
                 retailCart.push({ name, price, qty });
             }
 
-            // Reset inputs to default after adding
             select.value = "None";
             qtyInput.value = 1;
 
-            renderCart();
+            renderRetailCart();
             updateMath();
         });
 
-        function renderCart() {
+        function renderRetailCart() {
             const container = document.getElementById('retail-cart-container');
             container.innerHTML = '';
             retailCart.forEach((item, index) => {
@@ -421,7 +487,7 @@
                         <span class="text-sm text-gray-200">${item.name} <span class="text-yellow-500 font-bold ml-1">x${item.qty}</span></span>
                         <div class="flex items-center gap-4">
                             <span class="text-sm font-bold text-white">$${(item.price * item.qty).toFixed(2)}</span>
-                            <button type="button" onclick="removeFromCart(${index})" class="text-red-400 hover:text-red-300">
+                            <button type="button" onclick="removeRetailFromCart(${index})" class="text-red-400 hover:text-red-300">
                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                             </button>
                         </div>
@@ -431,9 +497,9 @@
             lucide.createIcons();
         }
 
-        window.removeFromCart = function(index) {
+        window.removeRetailFromCart = function(index) {
             retailCart.splice(index, 1);
-            renderCart();
+            renderRetailCart();
             updateMath();
         };
 
@@ -461,11 +527,8 @@
         });
 
         function updateMath() {
-            let servicePrice = parseFloat(servicePriceInput.value) || 0;
-            
-            // Sum up the entire retail cart instead of a single selection
+            let servicePrice = serviceCart.reduce((sum, item) => sum + item.price, 0);
             let retailPrice = retailCart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-            
             let cost = parseFloat(costInput.value) || 0;
 
             let subtotal = servicePrice + retailPrice;
@@ -491,7 +554,6 @@
             return { subtotal, tax, tipAmount, grandTotal, netProfit, cost, servicePrice, retailPrice };
         }
 
-        servicePriceInput.addEventListener('input', updateMath);
         costInput.addEventListener('input', updateMath);
 
         const ledgerContainer = document.getElementById('ledger-container');
@@ -515,13 +577,11 @@
                         </div>
                     `;
                 } else {
-                    // Convert retail array back to a string for the ledger view
-                    let displayRetail = "None";
-                    if(tx.retailItems && tx.retailItems.length > 0) {
-                        displayRetail = tx.retailItems.map(item => `${item.name} (x${item.qty})`).join(', ');
-                    }
-                    
+                    let displayRetail = tx.retailItems && tx.retailItems.length > 0 ? tx.retailItems.map(item => `${item.name} (x${item.qty})`).join(', ') : "None";
                     let retailHTML = displayRetail !== 'None' ? `<p><span class="font-semibold text-yellow-600/80">Retail:</span> ${displayRetail}</p>` : '';
+                    
+                    let displayService = tx.serviceItems && tx.serviceItems.length > 0 ? tx.serviceItems.map(item => item.name).join(', ') : "None";
+
                     ledgerContainer.innerHTML += `
                         <div class="bg-zinc-900 p-5 rounded-2xl shadow-lg border border-yellow-900/30 relative overflow-hidden">
                             <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-yellow-500 to-yellow-700"></div>
@@ -536,7 +596,7 @@
                                 </div>
                             </div>
                             <div class="text-sm text-gray-300 space-y-2">
-                                <p><span class="font-semibold text-yellow-600/80">Service:</span> ${tx.service}</p>
+                                <p><span class="font-semibold text-yellow-600/80">Service:</span> ${displayService}</p>
                                 ${retailHTML}
                                 <p class="text-xs text-yellow-500/80">Tip Included: $${tx.tip.toFixed(2)}</p>
                             </div>
@@ -577,13 +637,31 @@
             }, 1500);
         });
 
-        // Handle Transaction Submission
+        // ------------------------------------------------------------------
+        // BULLETPROOF SUBMISSION HANDLER
+        // ------------------------------------------------------------------
         document.getElementById('checkout-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const math = updateMath();
+            e.preventDefault(); // Stop strict HTML submission immediately
             
-            let finalClient = clientSelect.value === 'MANUAL_ENTRY' ? manualClientInput.value : clientSelect.value;
-            let finalService = serviceSelect.value === 'MANUAL_ENTRY' ? manualServiceInput.value : serviceSelect.value;
+            // 1. Explicit Validation Alerts
+            let finalClient = clientSelect.value === 'MANUAL_ENTRY' ? manualClientInput.value.trim() : clientSelect.value;
+            if (!finalClient) {
+                alert("⚠️ Please select a client or enter a walk-in name.");
+                return;
+            }
+
+            if (serviceCart.length === 0 && retailCart.length === 0) {
+                alert("⚠️ Your cart is empty! Please add at least one Service or Retail product before submitting.");
+                return;
+            }
+
+            if (costInput.value === '') {
+                alert("⚠️ Please enter the Product Cost / Write-Off. Enter 0 if there was no product cost.");
+                return;
+            }
+
+            // 2. Build Transaction Payload
+            const math = updateMath();
             let submittedFormula = formulaInput.value;
             let clientEmail = emailInput.value;
 
@@ -591,7 +669,7 @@
                 type: 'transaction',
                 id: 'TX-' + Math.floor(Math.random() * 10000 + 2000),
                 client: finalClient,
-                service: finalService,
+                serviceItems: serviceCart, 
                 servicePrice: math.servicePrice,
                 retailItems: retailCart, 
                 retailPrice: math.retailPrice,
@@ -605,31 +683,36 @@
                 date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
             };
             
+            // 3. Update UI Memory
             clientHistoryData[finalClient] = submittedFormula;
             globalDashStats.gross += math.grandTotal;
             globalDashStats.tips += math.tipAmount;
             globalDashStats.net += math.netProfit;
             updateDashboardUI();
 
+            // 4. Send to Google Sheets
             fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(newTx) });
 
             ledger.unshift(newTx);
             renderLedger();
 
+            // 5. Success Animation & Reset
             const overlay = document.getElementById('success-overlay');
             overlay.classList.remove('tab-hidden');
             setTimeout(() => {
                 overlay.classList.add('tab-hidden');
                 document.getElementById('checkout-form').reset();
                 manualClientInput.classList.add('hidden');
-                manualServiceInput.classList.add('hidden');
                 emailInput.value = '';
+                
+                // Reset arrays and UI
+                serviceCart = [];
+                retailCart = [];
+                renderServiceCart();
+                renderRetailCart();
+                
                 tipBtns.forEach(b => b.classList.remove('tip-active'));
                 selectedTipPct = 0;
-                
-                // Clear out the cart visually
-                retailCart = [];
-                renderCart();
                 updateMath();
                 
                 document.getElementById('btn-nav-dashboard').click();
