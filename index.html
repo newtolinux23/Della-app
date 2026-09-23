@@ -64,11 +64,12 @@
                 <span class="flex items-center gap-3"><i data-lucide="trending-up" class="w-6 h-6"></i> Command Center</span>
             </h2>
             
-            <!-- NEW REPORT TOGGLE SWITCH -->
+            <!-- 3-WAY REPORT TOGGLE SWITCH -->
             <div class="flex justify-center mb-6">
-                <div class="bg-zinc-800 p-1 rounded-xl flex gap-1 border border-yellow-900/30 w-full max-w-[300px]">
-                    <button id="btn-view-daily" class="flex-1 py-2 rounded-lg text-sm font-bold transition-all bg-yellow-600 text-black shadow-md">Today</button>
-                    <button id="btn-view-weekly" class="flex-1 py-2 rounded-lg text-sm font-bold transition-all text-gray-400 hover:text-white">This Week</button>
+                <div class="bg-zinc-800 p-1 rounded-xl flex gap-1 border border-yellow-900/30 w-full max-w-[360px]">
+                    <button id="btn-view-daily" class="flex-1 py-2 rounded-lg text-[13px] font-bold transition-all bg-yellow-600 text-black shadow-md">Today</button>
+                    <button id="btn-view-weekly" class="flex-1 py-2 rounded-lg text-[13px] font-bold transition-all text-gray-400 hover:text-white">This Week</button>
+                    <button id="btn-view-monthly" class="flex-1 py-2 rounded-lg text-[13px] font-bold transition-all text-gray-400 hover:text-white">This Month</button>
                 </div>
             </div>
 
@@ -277,9 +278,9 @@
         lucide.createIcons();
 
         // ------------------------------------------------------------------
-        // VERSION 14 GOOGLE APPS SCRIPT URL
+        // NEW WEB APP URL DEPLOYED SECURELY
         // ------------------------------------------------------------------
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwwyszbTz1F-4FQgQg3aT8kByzw4HdsXph4zTZNgDZDGBviXJ-_S62_n8ZFzairWTMv/exec';
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxXG_1Ox9E3OxhiQ3pgK7qv62Bi345wsniBTvNWvN2ztuhooP-oiXSsPlQhkVASSzEY/exec';
 
         const securityScreen = document.getElementById('security-screen');
         const pinForm = document.getElementById('pin-form');
@@ -289,10 +290,11 @@
 
         let clientHistoryData = {}; 
         
-        // NEW: Dual Dashboard Tracking
+        // Triple Dashboard Tracking
         let globalDashStats = { 
             daily: { gross: 0, net: 0, tips: 0, expenses: 0 },
-            weekly: { gross: 0, net: 0, tips: 0, expenses: 0 }
+            weekly: { gross: 0, net: 0, tips: 0, expenses: 0 },
+            monthly: { gross: 0, net: 0, tips: 0, expenses: 0 }
         }; 
         let currentDashView = 'daily'; 
         
@@ -326,24 +328,30 @@
         // ------------------------------------------------------------------
         const btnDaily = document.getElementById('btn-view-daily');
         const btnWeekly = document.getElementById('btn-view-weekly');
+        const btnMonthly = document.getElementById('btn-view-monthly');
 
-        btnDaily.addEventListener('click', () => {
-            currentDashView = 'daily';
-            btnDaily.className = "flex-1 py-2 rounded-lg text-sm font-bold transition-all bg-yellow-600 text-black shadow-md";
-            btnWeekly.className = "flex-1 py-2 rounded-lg text-sm font-bold transition-all text-gray-400 hover:text-white";
+        function setDashView(view) {
+            currentDashView = view;
+            const activeClass = "flex-1 py-2 rounded-lg text-[13px] font-bold transition-all bg-yellow-600 text-black shadow-md";
+            const inactiveClass = "flex-1 py-2 rounded-lg text-[13px] font-bold transition-all text-gray-400 hover:text-white";
+            
+            btnDaily.className = view === 'daily' ? activeClass : inactiveClass;
+            btnWeekly.className = view === 'weekly' ? activeClass : inactiveClass;
+            btnMonthly.className = view === 'monthly' ? activeClass : inactiveClass;
+            
             updateDashboardUI();
-        });
+        }
 
-        btnWeekly.addEventListener('click', () => {
-            currentDashView = 'weekly';
-            btnWeekly.className = "flex-1 py-2 rounded-lg text-sm font-bold transition-all bg-yellow-600 text-black shadow-md";
-            btnDaily.className = "flex-1 py-2 rounded-lg text-sm font-bold transition-all text-gray-400 hover:text-white";
-            updateDashboardUI();
-        });
+        btnDaily.addEventListener('click', () => setDashView('daily'));
+        btnWeekly.addEventListener('click', () => setDashView('weekly'));
+        btnMonthly.addEventListener('click', () => setDashView('monthly'));
 
         function updateDashboardUI() {
             const stats = globalDashStats[currentDashView];
-            const goal = currentDashView === 'weekly' ? 1500 : 300; // $1500 weekly goal, $300 daily goal
+            
+            let goal = 300;
+            if (currentDashView === 'weekly') goal = 1500;
+            if (currentDashView === 'monthly') goal = 6000;
             
             let totalIncome = stats.net + stats.tips;
             let estFedTax = totalIncome > 0 ? (totalIncome * 0.25) : 0;
@@ -364,7 +372,10 @@
 
             const msgEl = document.getElementById('goal-message');
             if (progressPct >= 100) {
-                msgEl.innerText = currentDashView === 'weekly' ? "Weekly Goal Crushed! 🎉" : "Daily Goal Crushed! 🎉";
+                let msg = "Daily Goal Crushed! 🎉";
+                if (currentDashView === 'weekly') msg = "Weekly Goal Crushed! 🎉";
+                if (currentDashView === 'monthly') msg = "Monthly Goal Crushed! 🎉";
+                msgEl.innerText = msg;
                 msgEl.className = "text-xs text-green-400 font-bold uppercase tracking-widest mt-1";
                 document.getElementById('goal-progress-bar').className = "bg-gradient-to-r from-green-500 to-green-400 h-full rounded-full transition-all duration-500";
             } else {
@@ -389,10 +400,10 @@
             
             clientHistoryData = data.history || {}; 
             
-            // Populate the dual dashboard stats
             if (data.dashboard) {
                 globalDashStats.daily = data.dashboard.daily || { gross: 0, net: 0, tips: 0, expenses: 0 };
                 globalDashStats.weekly = data.dashboard.weekly || { gross: 0, net: 0, tips: 0, expenses: 0 };
+                globalDashStats.monthly = data.dashboard.monthly || { gross: 0, net: 0, tips: 0, expenses: 0 };
             }
             
             if (data.recentActivity && data.recentActivity.length > 0) {
@@ -704,11 +715,13 @@
                 date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
             };
 
-            // ADD TO BOTH DAILY AND WEEKLY LIVE CACHE
+            // ADD TO DAILY, WEEKLY, AND MONTHLY LIVE CACHE
             globalDashStats.daily.expenses += expAmount;
             globalDashStats.daily.net -= expAmount;
             globalDashStats.weekly.expenses += expAmount;
             globalDashStats.weekly.net -= expAmount;
+            globalDashStats.monthly.expenses += expAmount;
+            globalDashStats.monthly.net -= expAmount;
             
             updateDashboardUI();
 
@@ -766,13 +779,16 @@
             
             clientHistoryData[finalClient] = submittedFormula;
             
-            // ADD TO BOTH DAILY AND WEEKLY LIVE CACHE
+            // ADD TO DAILY, WEEKLY, AND MONTHLY LIVE CACHE
             globalDashStats.daily.gross += math.grandTotal;
             globalDashStats.daily.tips += math.tipAmount;
             globalDashStats.daily.net += math.netProfit;
             globalDashStats.weekly.gross += math.grandTotal;
             globalDashStats.weekly.tips += math.tipAmount;
             globalDashStats.weekly.net += math.netProfit;
+            globalDashStats.monthly.gross += math.grandTotal;
+            globalDashStats.monthly.tips += math.tipAmount;
+            globalDashStats.monthly.net += math.netProfit;
             
             updateDashboardUI();
 
