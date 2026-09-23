@@ -60,13 +60,21 @@
         
         <!-- DASHBOARD TAB -->
         <div id="tab-dashboard" class="p-5">
-            <h2 class="text-xl text-yellow-500 border-b border-yellow-600/30 pb-3 mb-5 flex items-center gap-3" style="font-family: 'Cormorant Garamond', serif;">
-                <i data-lucide="trending-up" class="w-6 h-6"></i> Weekly Command Center
+            <h2 class="text-xl text-yellow-500 border-b border-yellow-600/30 pb-3 mb-5 flex items-center justify-between" style="font-family: 'Cormorant Garamond', serif;">
+                <span class="flex items-center gap-3"><i data-lucide="trending-up" class="w-6 h-6"></i> Command Center</span>
             </h2>
             
+            <!-- NEW REPORT TOGGLE SWITCH -->
+            <div class="flex justify-center mb-6">
+                <div class="bg-zinc-800 p-1 rounded-xl flex gap-1 border border-yellow-900/30 w-full max-w-[300px]">
+                    <button id="btn-view-daily" class="flex-1 py-2 rounded-lg text-sm font-bold transition-all bg-yellow-600 text-black shadow-md">Today</button>
+                    <button id="btn-view-weekly" class="flex-1 py-2 rounded-lg text-sm font-bold transition-all text-gray-400 hover:text-white">This Week</button>
+                </div>
+            </div>
+
             <div class="bg-zinc-900 p-6 rounded-2xl shadow-lg border border-yellow-900/30 mb-6 text-center">
                 <p class="text-xs text-gray-400 uppercase tracking-widest mb-1">True Take-Home Goal</p>
-                <h3 class="text-4xl font-bold text-white mb-4">$<span id="dash-net">0.00</span> <span class="text-lg text-gray-500 font-normal">/ $1500</span></h3>
+                <h3 class="text-4xl font-bold text-white mb-4">$<span id="dash-net">0.00</span> <span id="dash-goal-text" class="text-lg text-gray-500 font-normal">/ $300</span></h3>
                 
                 <div class="w-full bg-zinc-800 rounded-full h-4 mb-2 overflow-hidden border border-zinc-700">
                     <div id="goal-progress-bar" class="bg-gradient-to-r from-yellow-600 to-yellow-400 h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
@@ -102,7 +110,6 @@
             
             <form id="checkout-form" class="space-y-5" novalidate>
                 
-                <!-- CLIENT SELECTION -->
                 <div class="space-y-1.5">
                     <label class="block text-xs font-bold uppercase tracking-wider text-yellow-600">Select Client</label>
                     <select id="client-select" class="w-full p-3.5 rounded-xl border border-yellow-600/30 bg-zinc-900 text-white outline-none focus:border-yellow-500">
@@ -111,7 +118,6 @@
                     <input type="text" id="manual-client-input" class="w-full p-3.5 mt-2 rounded-xl border border-yellow-600/30 bg-zinc-800 text-white outline-none focus:border-yellow-500 hidden placeholder-gray-500" placeholder="Type Client Name...">
                 </div>
 
-                <!-- MANUAL MULTI-SERVICE CART -->
                 <div class="space-y-2 bg-zinc-900/50 p-4 rounded-xl border border-yellow-600/20">
                     <label class="block text-xs font-bold uppercase tracking-wider text-yellow-600">Services Rendered</label>
                     
@@ -134,7 +140,6 @@
                     </div>
                 </div>
 
-                <!-- MANUAL RETAIL CART -->
                 <div class="space-y-2 bg-zinc-900/50 p-4 rounded-xl border border-yellow-600/20">
                     <label class="block text-xs font-bold uppercase tracking-wider text-yellow-600">Retail Products</label>
                     
@@ -161,7 +166,6 @@
                     </div>
                 </div>
 
-                <!-- GRATUITY -->
                 <div class="space-y-2 pt-2">
                     <label class="block text-xs font-bold uppercase tracking-wider text-yellow-600">Add Gratuity</label>
                     <div class="grid grid-cols-4 gap-2">
@@ -171,7 +175,7 @@
                         <input type="number" id="custom-tip-input" step="0.01" class="p-3 rounded-lg border border-yellow-600/30 bg-zinc-900 text-white text-sm outline-none focus:border-yellow-500 text-center placeholder-gray-500" placeholder="Cust $">
                     </div>
                 </div>
-                
+
                 <div class="space-y-1.5 pt-2">
                     <label class="block text-xs font-bold uppercase tracking-wider text-yellow-600">Product Cost / Write-Off ($)</label>
                     <input type="number" id="cost-input" step="0.01" class="w-full p-3.5 rounded-xl border border-yellow-600/30 bg-zinc-900 text-white outline-none focus:border-yellow-500 placeholder-gray-600" placeholder="Cost of color/lightener used...">
@@ -182,7 +186,6 @@
                     <textarea id="formula-input" class="w-full p-3.5 rounded-xl border border-yellow-600/30 bg-zinc-900 text-white outline-none focus:border-yellow-500 h-28 resize-none placeholder-gray-600" placeholder="Client history will auto-fill here..."></textarea>
                 </div>
 
-                <!-- LIVE MATH PANEL -->
                 <div class="bg-gradient-to-br from-zinc-800 to-zinc-900 border border-yellow-600/50 p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.5)] mt-8 space-y-3 relative overflow-hidden">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-500/5 rounded-full blur-3xl -mr-10 -mt-10"></div>
                     <h3 class="text-yellow-500 text-lg border-b border-yellow-600/30 pb-3 mb-4" style="font-family: 'Cormorant Garamond', serif;">Final Calculation</h3>
@@ -274,9 +277,9 @@
         lucide.createIcons();
 
         // ------------------------------------------------------------------
-        // VERSION 12 GOOGLE APPS SCRIPT URL
+        // VERSION 14 GOOGLE APPS SCRIPT URL
         // ------------------------------------------------------------------
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwYR0j8h1YyMMJaGHwqbOs1lvfXAQpCWFDTgDFdSAEVq2lSW4f97KXWJem6vDZahyYo/exec';
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwwyszbTz1F-4FQgQg3aT8kByzw4HdsXph4zTZNgDZDGBviXJ-_S62_n8ZFzairWTMv/exec';
 
         const securityScreen = document.getElementById('security-screen');
         const pinForm = document.getElementById('pin-form');
@@ -285,7 +288,14 @@
         const unlockBtn = document.getElementById('unlock-btn');
 
         let clientHistoryData = {}; 
-        let globalDashStats = { gross: 0, net: 0, tips: 0, expenses: 0 }; 
+        
+        // NEW: Dual Dashboard Tracking
+        let globalDashStats = { 
+            daily: { gross: 0, net: 0, tips: 0, expenses: 0 },
+            weekly: { gross: 0, net: 0, tips: 0, expenses: 0 }
+        }; 
+        let currentDashView = 'daily'; 
+        
         let ledger = []; 
 
         pinForm.addEventListener('submit', (e) => {
@@ -311,34 +321,57 @@
                 });
         });
 
+        // ------------------------------------------------------------------
+        // DASHBOARD TOGGLE LOGIC
+        // ------------------------------------------------------------------
+        const btnDaily = document.getElementById('btn-view-daily');
+        const btnWeekly = document.getElementById('btn-view-weekly');
+
+        btnDaily.addEventListener('click', () => {
+            currentDashView = 'daily';
+            btnDaily.className = "flex-1 py-2 rounded-lg text-sm font-bold transition-all bg-yellow-600 text-black shadow-md";
+            btnWeekly.className = "flex-1 py-2 rounded-lg text-sm font-bold transition-all text-gray-400 hover:text-white";
+            updateDashboardUI();
+        });
+
+        btnWeekly.addEventListener('click', () => {
+            currentDashView = 'weekly';
+            btnWeekly.className = "flex-1 py-2 rounded-lg text-sm font-bold transition-all bg-yellow-600 text-black shadow-md";
+            btnDaily.className = "flex-1 py-2 rounded-lg text-sm font-bold transition-all text-gray-400 hover:text-white";
+            updateDashboardUI();
+        });
+
         function updateDashboardUI() {
-            const weeklyGoal = 1500;
+            const stats = globalDashStats[currentDashView];
+            const goal = currentDashView === 'weekly' ? 1500 : 300; // $1500 weekly goal, $300 daily goal
             
-            let totalIncome = globalDashStats.net + globalDashStats.tips;
+            let totalIncome = stats.net + stats.tips;
             let estFedTax = totalIncome > 0 ? (totalIncome * 0.25) : 0;
             let trueTakeHome = totalIncome - estFedTax;
 
-            document.getElementById('dash-gross').innerText = (globalDashStats.gross || 0).toFixed(2);
+            document.getElementById('dash-gross').innerText = (stats.gross || 0).toFixed(2);
             document.getElementById('dash-net').innerText = trueTakeHome.toFixed(2);
-            document.getElementById('dash-tips').innerText = (globalDashStats.tips || 0).toFixed(2);
-            document.getElementById('dash-expenses').innerText = (globalDashStats.expenses || 0).toFixed(2);
+            document.getElementById('dash-goal-text').innerText = `/ $${goal}`;
+            document.getElementById('dash-tips').innerText = (stats.tips || 0).toFixed(2);
+            document.getElementById('dash-expenses').innerText = (stats.expenses || 0).toFixed(2);
             document.getElementById('dash-fed-tax').innerText = estFedTax.toFixed(2);
             
-            let progressPct = Math.min((trueTakeHome / weeklyGoal) * 100, 100);
+            let progressPct = Math.min((trueTakeHome / goal) * 100, 100);
             
             setTimeout(() => {
                 document.getElementById('goal-progress-bar').style.width = progressPct + '%';
-            }, 300);
+            }, 100);
 
             const msgEl = document.getElementById('goal-message');
             if (progressPct >= 100) {
-                msgEl.innerText = "Weekly Goal Crushed! 🎉";
+                msgEl.innerText = currentDashView === 'weekly' ? "Weekly Goal Crushed! 🎉" : "Daily Goal Crushed! 🎉";
                 msgEl.className = "text-xs text-green-400 font-bold uppercase tracking-widest mt-1";
-                document.getElementById('goal-progress-bar').className = "bg-gradient-to-r from-green-500 to-green-400 h-full rounded-full transition-all duration-1000";
+                document.getElementById('goal-progress-bar').className = "bg-gradient-to-r from-green-500 to-green-400 h-full rounded-full transition-all duration-500";
             } else {
-                let remaining = (weeklyGoal - trueTakeHome).toFixed(2);
+                let remaining = (goal - trueTakeHome).toFixed(2);
                 msgEl.innerText = `$${remaining} to hit your goal`;
                 msgEl.className = "text-xs text-yellow-500/80 font-medium italic mt-1";
+                document.getElementById('goal-progress-bar').className = "bg-gradient-to-r from-yellow-600 to-yellow-400 h-full rounded-full transition-all duration-500";
             }
         }
 
@@ -355,9 +388,13 @@
             retailSelect.innerHTML = '<option value="None" data-price="0">-- Select Product --</option>';
             
             clientHistoryData = data.history || {}; 
-            globalDashStats = data.dashboard || { gross: 0, net: 0, tips: 0, expenses: 0 };
             
-            // --- NEW: INGEST RECENT ACTIVITY FROM BACKEND ---
+            // Populate the dual dashboard stats
+            if (data.dashboard) {
+                globalDashStats.daily = data.dashboard.daily || { gross: 0, net: 0, tips: 0, expenses: 0 };
+                globalDashStats.weekly = data.dashboard.weekly || { gross: 0, net: 0, tips: 0, expenses: 0 };
+            }
+            
             if (data.recentActivity && data.recentActivity.length > 0) {
                 ledger = data.recentActivity;
                 renderLedger();
@@ -624,7 +661,6 @@
                         </div>
                     `;
                 } else {
-                    // --- HANDLE BOTH BACKEND STRINGS AND LOCAL ARRAYS ---
                     let displayRetail = tx.displayRetail || (tx.retailItems && tx.retailItems.length > 0 ? tx.retailItems.map(item => `${item.name} (x${item.qty})`).join(', ') : "None");
                     let retailHTML = displayRetail !== 'None' ? `<p><span class="font-semibold text-yellow-600/80">Retail:</span> ${displayRetail}</p>` : '';
                     
@@ -668,8 +704,12 @@
                 date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
             };
 
-            globalDashStats.expenses += expAmount;
-            globalDashStats.net -= expAmount;
+            // ADD TO BOTH DAILY AND WEEKLY LIVE CACHE
+            globalDashStats.daily.expenses += expAmount;
+            globalDashStats.daily.net -= expAmount;
+            globalDashStats.weekly.expenses += expAmount;
+            globalDashStats.weekly.net -= expAmount;
+            
             updateDashboardUI();
 
             fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(newExp) });
@@ -691,12 +731,8 @@
         document.getElementById('checkout-form').addEventListener('submit', function(e) {
             e.preventDefault(); 
             
-            // Explicit Validation Alerts
             let finalClient = clientSelect.value === 'MANUAL_ENTRY' ? manualClientInput.value.trim() : clientSelect.value;
-            if (!finalClient) {
-                alert("⚠️ Please select a client or enter a walk-in name.");
-                return;
-            }
+            if (!finalClient) { alert("⚠️ Please select a client or enter a walk-in name."); return; }
 
             if (serviceCart.length === 0 && retailCart.length === 0) {
                 alert("⚠️ Your cart is empty! Please add at least one Service or Retail product before submitting.");
@@ -708,7 +744,6 @@
                 return;
             }
 
-            // Build Transaction Payload
             const math = updateMath();
             let submittedFormula = formulaInput.value;
 
@@ -729,20 +764,23 @@
                 date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
             };
             
-            // Update UI Memory
             clientHistoryData[finalClient] = submittedFormula;
-            globalDashStats.gross += math.grandTotal;
-            globalDashStats.tips += math.tipAmount;
-            globalDashStats.net += math.netProfit;
+            
+            // ADD TO BOTH DAILY AND WEEKLY LIVE CACHE
+            globalDashStats.daily.gross += math.grandTotal;
+            globalDashStats.daily.tips += math.tipAmount;
+            globalDashStats.daily.net += math.netProfit;
+            globalDashStats.weekly.gross += math.grandTotal;
+            globalDashStats.weekly.tips += math.tipAmount;
+            globalDashStats.weekly.net += math.netProfit;
+            
             updateDashboardUI();
 
-            // Send to Google Sheets
             fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(newTx) });
 
             ledger.unshift(newTx);
             renderLedger();
 
-            // Success Animation & Reset
             const overlay = document.getElementById('success-overlay');
             overlay.classList.remove('tab-hidden');
             setTimeout(() => {
@@ -752,7 +790,6 @@
                 manualServiceInput.classList.add('hidden');
                 manualRetailInput.classList.add('hidden');
                 
-                // Reset arrays and UI
                 serviceCart = [];
                 retailCart = [];
                 renderServiceCart();
